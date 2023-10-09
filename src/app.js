@@ -16,6 +16,7 @@ import {
 import cookieParser from "cookie-parser";
 import { authToken, authorization } from "./utils.js";
 import { Server } from "socket.io";
+import errorHandler from "./middlewares/errors/index.js";
 
 // Inicializar servicios
 dotenv.config();
@@ -29,6 +30,7 @@ const messages = [];
 
 // Middlewares
 app.use(cors());
+app.use(errorHandler);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -56,12 +58,7 @@ app.use("/api/userCart", authToken, authorization("user"), UserCart);
 app.use("/api/carts", authToken, authorization("user"), CartsRouter);
 app.use("/api/sessions", SessionsRouter);
 app.use("/api/products", ProductsRouter);
-app.use(
-  "/api/realTimeProducts",
-  authToken,
-  authorization("admin"),
-  RealTimeProducts
-);
+app.use("/api/realTimeProducts", RealTimeProducts);
 app.use("/api/mockingProducts", MockingProducts);
 
 // Server

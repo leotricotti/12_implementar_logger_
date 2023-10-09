@@ -1,13 +1,13 @@
-import EErrors from "../../services/errors/enum";
+import EErrors from "../../services/errors/enum.js";
 
-export default function (err, req, res, next) {
-  console.log(err.cause);
-  switch (err.code) {
+export default (error, req, res, next) => {
+  console.log(error);
+  switch (error.code) {
     case EErrors.INVALID_TYPES_ERROR:
-      res.send({ status: "error", error: err.name });
+      res.send({ status: "error", error: error.name });
       break;
     default:
       res.send({ status: "error", error: "Unhadled error" });
       break;
   }
-}
+};
