@@ -1,4 +1,7 @@
 import { productsService } from "../repository/index.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErros from "../services/errors/enum.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 // Método asyncrono para obtener los productos en tiempo real
 async function getProducts(req, res) {
@@ -39,7 +42,7 @@ async function saveProduct(req, res) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock) {
-      res.status(400).json({ message: "Faltan datos" });
+      Cu;
     } else {
       const product = {
         title: title,

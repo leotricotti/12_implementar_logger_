@@ -32,27 +32,4 @@ async function getAll(req, res) {
   }
 }
 
-// Método asyncrono para obtener un Productso
-async function getOne(req, res) {
-  const { pid } = req.params;
-  try {
-    const Products = await productsService.getOneProduct(pid);
-    if (Products) {
-      res.json({
-        Products: tempArray,
-        styles: "Products.styles.css",
-      });
-    } else {
-      res.status(404).json({
-        message: "Productso no encontrado",
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      message: "Error al obtener el producto",
-      data: err,
-    });
-  }
-}
-
-export { getAll, getOne };
+export { getAll };
