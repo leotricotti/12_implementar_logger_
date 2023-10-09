@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAll, getOne } from "../controllers/products.controller.js";
+import { getAll } from "../controllers/products.controller.js";
 
 //Inicializar servicios
 const router = Router();

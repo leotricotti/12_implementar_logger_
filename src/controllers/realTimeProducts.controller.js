@@ -41,8 +41,20 @@ async function saveProduct(req, res) {
   const { title, description, code, price, stock, category, thumbnail } =
     req.body;
   try {
-    if (!title || !description || !price || !code || !stock) {
-      Cu;
+    if (!title || !description || !price || !code || !stock || !category) {
+      CustomError.createError({
+        name: "Error al crear el producto",
+        cause: generateProductErrorInfo({
+          title,
+          description,
+          code,
+          price,
+          stock,
+          category,
+        }),
+        message: "Faltan datos",
+        code: EErros.INVALID_TYPES_ERROR,
+      });
     } else {
       const product = {
         title: title,
