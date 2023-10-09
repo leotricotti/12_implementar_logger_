@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Store | Carrito de compras</title>
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon" />
+    <!--Socket.io -->
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+    <!-- Animate CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/a3057acf10.js"
+      crossorigin="anonymous"
+    ></script>
+    <!--Bootstrap 5-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/cart.styles.css" />
+  </head>
+  <body>
+    <main>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed">
+        <div class="container-fluid">
+          <img
+            src="../img/logo.jpg"
+            alt="E-Store logo"
+            class="rounded-circle me-2"
+            width="25"
+            height="25"
+          />
+          <a class="navbar-brand" href="#"> E-Store </a>
+          <div
+            class="collapse navbar-collapse d-flex align-items-center mb-0 position-relative"
+            id="navbarSupportedContent"
+          >
+            <ul
+              class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu d-flex align-items-center"
+            >
+              <div id="welcome-user"></div>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span class="text-light me-3" id="'user-name"> </span>
+                  <i class="fas fa-user"></i>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="fas fa-sliders-h fa-fw"></i>
+                      Cuenta
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="fas fa-cog fa-fw"></i>
+                      Configuración
+                    </a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <button class="btn dropdown-item" onclick="logout()">
+                      <i class="fas fa-sign-out-alt fa-fw"></i>
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
+              </li>
+              <div class="btn position-relative">
+                <div class="cart-basket">
+                  <span class="basket-count" id="cart-badge"></span>
+                </div>
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="container h-100 py-5 mb-1 pb-2" id="cart-nav-container"></div>
+      <div id="cart-container"></div>
+      <section class="chat-section">
+        <img
+          src="../img/logo.jpg"
+          class="chat-img"
+          alt="Chat logo"
+          id="chat-img-id"
+        />
+        <div class="container chat-container-item py-5">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-4">
+              <div
+                class="card chat-card"
+                id="chat1"
+                style="border-radius: 15px"
+              >
+                <div
+                  class="card-header d-flex justify-content-between align-items-center p-3 bg-primary text-white border-bottom-0"
+                  style="
+                    border-top-left-radius: 15px;
+                    border-top-right-radius: 15px;
+                  "
+                >
+                  <i class="fas fa-angle-left"></i>
+                  <p class="mb-0 fw-bold">E-Store Chat</p>
+                  <i class="fas fa-times" id="chat-close"></i>
+                </div>
+                <div class="card-body">
+                  <div class="messages">
+                    <div class="d-flex flex-row justify-content-start mb-4">
+                      <img
+                        src="../img/logo.jpg"
+                        alt="avatar 1"
+                        style="width: 45px; height: 100%"
+                      />
+                      <div
+                        class="p-3 ms-3"
+                        style="
+                          border-radius: 15px;
+                          background-color: rgba(57, 192, 237, 0.2);
+                        "
+                      >
+                        <p class="small mb-0">
+                          Gracias por visitar nuestra tienda. ¿En que podemos
+                          ayudarte?
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="message-logs"></div>
+                  <div class="form-outline">
+                    <textarea
+                      class="form-control chat-form"
+                      id="textAreaExample"
+                      rows="1"
+                    ></textarea>
+                    <label class="form-label chat-label" for="textAreaExample"
+                      >Escribe tu mensaje</label
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Boostrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Chat -->
+    <script src="../js/chat.scripts.js"></script>
+    <!--Welcome user-->
+    <script src="../js/welcomeUser.scripts.js"></script>
+    <!-- Logout -->
+    <script src="../js/logout.scripts.js"></script>
+    <!-- Cart Badge -->
+    <script src="../js/cartBadge.scripts.js"></script>
+    <!-- Custom JS -->
+    <script src="../js/cart.scripts.js"></script>
+  </body>
+</html>

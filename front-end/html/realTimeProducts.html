@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Store | Panel de administración</title>
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon" />
+    <!-- Animate CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/a3057acf10.js"
+      crossorigin="anonymous"
+    ></script>
+    <!--Bootstrap 5-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/realTimeProducts.styles.css" />
+  </head>
+  <body>
+    <main>
+      <nav
+        class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed top-0 left-0"
+      >
+        <div class="container-fluid">
+          <img
+            src="../img/logo.jpg"
+            alt="E-Store logo"
+            class="rounded-circle me-2"
+            width="25"
+            height="25"
+          />
+          <a
+            class="navbar-brand"
+            href="http://127.0.0.1:5500/html/products.html "
+          >
+            E-Store
+          </a>
+          <div
+            class="collapse navbar-collapse d-flex align-items-center mb-0 position-relative"
+            id="navbarSupportedContent"
+          >
+            <ul
+              class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu d-flex align-items-center"
+            >
+              <div id="welcome-user"></div>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span class="text-light me-3" id="'user-name"> </span>
+                  <i class="fas fa-user"></i>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="fas fa-sliders-h fa-fw"></i>
+                      Cuenta
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="fas fa-cog fa-fw"></i>
+                      Configuración
+                    </a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <button class="btn dropdown-item" onclick="logout()">
+                      <i class="fas fa-sign-out-alt fa-fw"></i>
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="update-product-container" id="update-product-container">
+        <h3 class="text-center mt-5 mb-5 text-decoration-underline rt-products">
+          Agregar productos
+        </h3>
+        <form action="" class="form-container" id="add-product-form">
+          <div class="mb-3">
+            <label for="title" class="form-label"> Nombre del producto: </label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              placeholder="Ingrese el nombre del producto..."
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label"> Descripción: </label>
+            <textarea
+              class="form-control"
+              placeholder="Descripción del producto..."
+              id="description"
+              style="height: 80px"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="code" class="form-label"> Código de producto: </label>
+            <input
+              type="text"
+              class="form-control"
+              id="code"
+              placeholder="Ingrese el código único del producto..."
+            />
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label"> Precio: </label>
+            <input
+              type="number"
+              class="form-control"
+              id="price"
+              placeholder="Ingrese el precio del producto..."
+            />
+          </div>
+          <div class="mb-3">
+            <label for="stock" class="form-label"> Stock: </label>
+            <input
+              type="number"
+              class="form-control"
+              id="stock"
+              placeholder="Ingrese el stock del producto..."
+            />
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label"> Categoría: </label>
+            <input
+              type="text"
+              class="form-control"
+              id="category"
+              placeholder="Ingrese la categoria del producto..."
+            />
+          </div>
+          <div class="mb-3">
+            <label for="thumbnail" class="form-label"> Imagen: </label>
+            <input
+              type="text"
+              class="form-control"
+              id="thumbnail"
+              placeholder="Ingrese la ruta de la imagen..."
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" id="submit">
+            Crear producto
+          </button>
+        </form>
+      </div>
+      <div class="list-group list" id="products-list"></div>
+      <div class="d-flex justify-content-center mt-5 mb-5">
+        <button
+          type="button"
+          class="btn btn-link next-page"
+          onclick="addProductBtn()"
+          id="add-product-btn"
+        >
+          Cargar más productos
+        </button>
+      </div>
+    </main>
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Boostrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <!--Welcome user-->
+    <script src="../js/welcomeUser.scripts.js"></script>
+    <!-- Logout JS -->
+    <script src="../js/logout.scripts.js"></script>
+    <!-- >Custom JS -->
+    <script src="../js/realTimeProducts.scripts.js"></script>
+  </body>
+</html>
