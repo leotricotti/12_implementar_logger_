@@ -42,6 +42,7 @@ async function saveProduct(req, res) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock || !category) {
+      console.log("entro al if");
       CustomError.createError({
         name: "Error al crear el producto",
         cause: generateProductErrorInfo({
@@ -56,6 +57,7 @@ async function saveProduct(req, res) {
         code: EErros.INVALID_TYPES_ERROR,
       });
     } else {
+      console.log("entro al else");
       const product = {
         title: title,
         description: description,
@@ -66,6 +68,7 @@ async function saveProduct(req, res) {
         thumbnail: thumbnail,
       };
       let result = await productsService.saveOneProduct(product);
+      console.log(result);
       res.json({ message: "Producto creado con éxito", data: product });
     }
   } catch (err) {

@@ -30,7 +30,6 @@ const messages = [];
 
 // Middlewares
 app.use(cors());
-app.use(errorHandler);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -60,6 +59,7 @@ app.use("/api/sessions", SessionsRouter);
 app.use("/api/products", ProductsRouter);
 app.use("/api/realTimeProducts", RealTimeProducts);
 app.use("/api/mockingProducts", MockingProducts);
+app.use(errorHandler);
 
 // Server
 const httpServer = app.listen(PORT, () => {
