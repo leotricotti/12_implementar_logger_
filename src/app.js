@@ -14,9 +14,10 @@ import {
   githubStrategy,
 } from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
-import { authToken, authorization } from "./utils.js";
+import { authToken, authorization } from "./utils/utils.js";
 import { Server } from "socket.io";
 import errorHandler from "./middlewares/errors/index.js";
+import { addLogger } from "./utils/logger.js";
 
 // Inicializar servicios
 dotenv.config();
@@ -30,9 +31,11 @@ const messages = [];
 
 // Middlewares
 app.use(cors());
+app.use(addLogger);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(errorHandler);
 
 // Passport
 githubStrategy();
@@ -59,7 +62,9 @@ app.use("/api/sessions", SessionsRouter);
 app.use("/api/products", ProductsRouter);
 app.use("/api/realTimeProducts", RealTimeProducts);
 app.use("/api/mockingProducts", MockingProducts);
-app.use(errorHandler);
+app.get("/", (req, res) => {
+  req.logger.warn("Alerta"), res.send({ mensaje: "Prueba de logger" });
+});
 
 // Server
 const httpServer = app.listen(PORT, () => {

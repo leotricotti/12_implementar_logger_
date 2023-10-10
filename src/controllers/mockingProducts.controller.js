@@ -1,4 +1,4 @@
-import { generateProducts } from "../utils.js";
+import { generateProducts } from "../utils/utils.js";
 
 const getProducts = (req, res) => {
   const products = [];

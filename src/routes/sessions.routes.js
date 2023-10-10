@@ -8,7 +8,7 @@ import {
   githubCallback,
   currentUser,
 } from "../controllers/sessions.controller.js";
-import { passportCall } from "../utils.js";
+import { passportCall } from "../utils/utils.js";
 
 //Inicializa servicios
 const router = Router();

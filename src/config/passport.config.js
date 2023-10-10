@@ -4,7 +4,7 @@ import local from "passport-local";
 import * as dotenv from "dotenv";
 import GitHubStrategy from "passport-github2";
 import { usersService } from "../repository/index.js";
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash } from "../utils/utils.js";
 
 // Inicializar servicios
 dotenv.config();

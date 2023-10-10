@@ -1,8 +1,7 @@
 import * as dotenv from "dotenv";
-import { createHash } from "../utils.js";
 import { usersService } from "../repository/index.js";
 import UsersDto from "../dao/DTOs/users.dto.js";
-import { generateToken, isValidPassword } from "../utils.js";
+import { generateToken, isValidPassword, createHash } from "../utils/utils.js";
 
 //Inicializa servicios
 dotenv.config();
