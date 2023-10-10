@@ -53,12 +53,12 @@ async function enviroment() {
 enviroment();
 
 // Routes
-// app.use("/api/userCart", authToken, authorization("user"), UserCart);
-// app.use("/api/carts", authToken, authorization("user"), CartsRouter);
-// app.use("/api/sessions", SessionsRouter);
-// app.use("/api/products", ProductsRouter);
+app.use("/api/userCart", authToken, authorization("user"), UserCart);
+app.use("/api/carts", authToken, authorization("user"), CartsRouter);
+app.use("/api/sessions", SessionsRouter);
+app.use("/api/products", ProductsRouter);
 app.use("/api/realTimeProducts", RealTimeProducts);
-// app.use("/api/mockingProducts", MockingProducts);
+app.use("/api/mockingProducts", MockingProducts);
 app.use(errorHandler);
 
 // Server
@@ -66,25 +66,25 @@ const httpServer = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// // Socket.io
-// const io = new Server(httpServer, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
+// Socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
+});
 
-// io.on("connection", (socket) => {
-//   console.log("Nuevo cliente conectado!");
-//   socket.on("message", (data) => {
-//     // Enviar una respuesta automática junto con el mensaje recibido
-//     const mensaje = data.message;
-//     const respuesta =
-//       "Gracias por contactarnos! En breve uno de nuestros representantes se comunicará contigo.";
-//     const mensajeConRespuesta = {
-//       mensaje: mensaje,
-//       respuesta: respuesta,
-//     };
-//     messages.push(mensajeConRespuesta);
-//     io.emit("messageLogs", messages);
-//   });
-// });
+io.on("connection", (socket) => {
+  console.log("Nuevo cliente conectado!");
+  socket.on("message", (data) => {
+    // Enviar una respuesta automática junto con el mensaje recibido
+    const mensaje = data.message;
+    const respuesta =
+      "Gracias por contactarnos! En breve uno de nuestros representantes se comunicará contigo.";
+    const mensajeConRespuesta = {
+      mensaje: mensaje,
+      respuesta: respuesta,
+    };
+    messages.push(mensajeConRespuesta);
+    io.emit("messageLogs", messages);
+  });
+});
