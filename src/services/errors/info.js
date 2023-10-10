@@ -1,5 +1,4 @@
 export const generateProductErrorInfo = (product) => {
-  console.log("entro a generateProductErrorInfo");
   return `One or more products are incomplet or invalid:
   List of required fields:
   * title: needs to be a string ${product.title}
