@@ -72,9 +72,6 @@ app.use(
   authorization("user"),
   MockingProducts
 );
-app.get("/", (req, res) => {
-  req.logger.warn("Alerta"), res.send({ mensaje: "Prueba de logger" });
-});
 
 // Server
 const httpServer = app.listen(PORT, () => {

@@ -51,7 +51,8 @@ const prodLogger = winston.createLogger({
 });
 
 export const addLogger = (req, res, next) => {
-  req.logger = process.env.ENVIROMENT === "production" ? devLogger : prodLogger;
+  req.logger =
+    process.env.ENVIRONMENT === "production" ? devLogger : prodLogger;
   const { body } = req;
   let bodyData = { ...body };
 
