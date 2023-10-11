@@ -1,6 +1,6 @@
 import { productsService } from "../repository/index.js";
 
-// Método asyncrono para obtener todos los Productsos
+// Método asyncrono para obtener todos los productos
 async function getAll(req, res) {
   const { page, sort, category } = req.query;
   try {
@@ -25,7 +25,8 @@ async function getAll(req, res) {
       });
     }
   } catch (err) {
-    res.json({
+    logger.error("Error al obtener los productos.", err);
+    res.status(500).json({
       message: "Error al obtener los productos.",
       data: err,
     });

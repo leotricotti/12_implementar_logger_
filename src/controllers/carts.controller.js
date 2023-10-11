@@ -6,6 +6,7 @@ async function getAll(req, res) {
     const carts = await cartService.getAllCarts();
     res.json({ carts });
   } catch (err) {
+    req.logger.error("Error al obtener los carritos", err);
     res.status(500).json({
       message: "Error al obtener los carritos",
       data: err,
@@ -26,6 +27,7 @@ async function getOne(req, res) {
       });
     }
   } catch (err) {
+    req.logger.error("Error al obtener el carrito", err);
     res.status(500).json({
       message: "Error al obtener el carrito",
       data: err,
@@ -42,6 +44,7 @@ async function populatedCart(req, res) {
       res.json({ message: "Carrito populado con éxito", data: cart });
     }
   } catch (err) {
+    req.logger.error("Error al obtener el carrito", err);
     res.status(500).json({
       message: "Error al obtener el carrito",
       data: err,
@@ -56,6 +59,7 @@ async function createCart(req, res) {
     const result = await cartService.saveOneCart(newCart);
     res.json({ message: "Carrito creado con éxito", data: newCart });
   } catch (err) {
+    req.logger.error("Error al crear el carrito", err);
     res.status(500).json({ message: "Error al crear el carrito ", data: err });
   }
 }
@@ -84,6 +88,7 @@ async function manageCartProducts(req, res) {
 
     res.json({ message: "Carrito actualizado con éxito", data: cart });
   } catch (err) {
+    req.logger.error("Error al actualizar el carrito", err);
     res.status(500).json({
       message: "Error al actualizar el carrito",
       data: err,
@@ -107,6 +112,7 @@ async function deleteProduct(req, res) {
 
     res.json({ message: "Producto eliminado con éxito", data: cart });
   } catch (err) {
+    req.logger.error("Error al eliminar el producto del carrito", err);
     res.status(500).json({
       message: "Error al eliminar el producto del carrito",
       data: err,
@@ -129,6 +135,7 @@ async function emptyCart(req, res) {
       });
     }
   } catch (err) {
+    req.logger.error("Error al vaciar el carrito", err);
     res.status(500).json({
       message: "Error al vaciar el carrito",
       data: err,
