@@ -2,6 +2,8 @@ import * as dotenv from "dotenv";
 import { usersService } from "../repository/index.js";
 import UsersDto from "../dao/DTOs/users.dto.js";
 import { generateToken, isValidPassword, createHash } from "../utils/utils.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
 
 //Inicializa servicios
 dotenv.config();
@@ -14,18 +16,41 @@ async function signupUser(req, res) {
   try {
     res.status(200).json({ message: "Usuario creado con éxito" });
   } catch (err) {
-    req.req.logger.error("Error al crear el usuario", err);
-    res.status(500).json({ message: "Error al crear el usuario" });
+    req.logger.error("Error al crear el usuario", err);
+    const customError = new CustomError({
+      name: "Error al crear el usuario",
+      message: "Error al crear el usuario",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al crear el usuario", data: customError });
   }
 }
 
 //Ruta que se ejecuta cuando falla el registro
 async function failRegister(req, res) {
   try {
-    res.status(500).json({ message: "Error al crear el usuario" });
+    const customError = new CustomError({
+      name: "Error al crear el usuario",
+      message: "Error al crear el usuario",
+      code: EErrors.DATABASE_ERROR,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al crear el usuario", data: customError });
   } catch (err) {
     req.logger.error("Error al crear el usuario", err);
-    res.status(500).json({ message: "Error al crear el usuario" });
+    const customError = new CustomError({
+      name: "Error al crear el usuario",
+      message: "Error al crear el usuario",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al crear el usuario", data: customError });
   }
 }
 
@@ -33,18 +58,29 @@ async function failRegister(req, res) {
 async function loginUser(req, res) {
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).json({
+    const customError = new CustomError({
+      name: "Error al iniciar sesión",
       message: "Error al iniciar sesión",
-      data: "Faltan campos",
+      code: EErrors.INVALID_TYPES_ERROR,
     });
+    res
+      .status(400)
+      .json({ message: "Error al iniciar sesión", data: customError });
+    return;
   }
 
   try {
     const result = await usersService.getOneUser(username);
 
     if (result.length === 0 || !isValidPassword(result[0].password, password)) {
+      const customError = new CustomError({
+        name: "Error al iniciar sesión",
+        message: "Error al iniciar sesión",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
       res.status(401).json({
         respuesta: "Usuario o contraseña incorrectos",
+        data: customError,
       });
       return;
     }
@@ -58,17 +94,40 @@ async function loginUser(req, res) {
     res.json({ message: "Login correcto", token: myToken });
   } catch (err) {
     req.logger.error("Error al iniciar sesión", err);
-    res.status(500).json({ message: "Error al iniciar sesión" });
+    const customError = new CustomError({
+      name: "Error al iniciar sesión",
+      message: "Error al iniciar sesión",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al iniciar sesión", data: customError });
   }
 }
 
 //Ruta que se ejecuta cuando falla el registro
 async function failLogin(req, res) {
   try {
-    res.status(500).json({ message: "Error al iniciar sesión" });
+    const customError = new CustomError({
+      name: "Error al iniciar sesión",
+      message: "Error al iniciar sesión",
+      code: EErrors.DATABASE_ERROR,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al iniciar sesión", data: customError });
   } catch (err) {
     req.logger.error("Error al iniciar sesión", err);
-    res.status(500).json({ message: "Error al iniciar sesión" });
+    const customError = new CustomError({
+      name: "Error al iniciar sesión",
+      message: "Error al iniciar sesión",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al iniciar sesión", data: customError });
   }
 }
 
@@ -78,22 +137,34 @@ async function forgotPassword(req, res) {
 
   try {
     const result = await usersService.getOneUser(username);
-    if (result.length === 0)
-      return res.status(401).json({
-        respuesta: "El usuario no existe",
+    if (result.length === 0) {
+      const customError = new CustomError({
+        name: "Error al recuperar la contraseña",
+        message: "Error al recuperar la contraseña",
+        code: EErrors.INVALID_TYPES_ERROR,
       });
-    else {
+      res
+        .status(401)
+        .json({ respuesta: "El usuario no existe", data: customError });
+      return;
+    } else {
       const updatePassword = await usersService.updateUserPassword(
         result[0]._id,
         createHash(newPassword)
       );
-      res.status(200).json({
-        respuesta: "Contraseña actualizada con éxito",
-      });
+      res.status(200).json({ respuesta: "Contraseña actualizada con éxito" });
     }
   } catch (err) {
     req.logger.error("Error al recuperar la contraseña", err);
-    res.status(500).json({ message: "Error al recuperar la contraseña" });
+    const customError = new CustomError({
+      name: "Error al recuperar la contraseña",
+      message: "Error al recuperar la contraseña",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error al recuperar la contraseña", data: customError });
   }
 }
 
@@ -104,7 +175,16 @@ async function currentUser(req, res) {
     res.status(200).json({ data: user });
   } catch (err) {
     req.logger.error("Error al obtener el usuario actual", err);
-    res.status(500).json({ message: "Error al obtener el usuario actual" });
+    const customError = new CustomError({
+      name: "Error al obtener el usuario actual",
+      message: "Error al obtener el usuario actual",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res.status(500).json({
+      message: "Error al obtener el usuario actual",
+      data: customError,
+    });
   }
 }
 
@@ -115,7 +195,15 @@ async function githubCallback(req, res) {
     res.redirect("/api/products?page=1");
   } catch (err) {
     req.logger.error("Error en el callback de GitHub", err);
-    res.status(500).json({ message: "Error en el callback de GitHub" });
+    const customError = new CustomError({
+      name: "Error en el callback de GitHub",
+      message: "Error en el callback de GitHub",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    res
+      .status(500)
+      .json({ message: "Error en el callback de GitHub", data: customError });
   }
 }
 

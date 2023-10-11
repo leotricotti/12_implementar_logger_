@@ -1,6 +1,6 @@
 import { productsService } from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
-import EErros from "../services/errors/enum.js";
+import EErrors from "../services/errors/enum.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 
 // Método asyncrono para obtener los productos en tiempo real
@@ -8,14 +8,26 @@ async function getProducts(req, res) {
   try {
     let result = await productsService.getAllProducts();
     if (!result) {
-      res.status(404).json({ message: "Error al cargar los productos" });
+      throw new CustomError({
+        name: "Error al cargar los productos",
+        message: "Error al cargar los productos",
+        code: EErrors.DATABASE_ERROR,
+      });
     } else {
       res.json({ message: "Productos obtenidos con éxito", data: result });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener los productos", data: err });
+    const customError = new CustomError({
+      name: "Error al obtener los productos",
+      message: "Error al obtener los productos",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    req.logger.error(customError);
+    res.status(500).json({
+      message: "Error al obtener los productos",
+      data: generateProductErrorInfo(customError, EErrors.DATABASE_ERROR),
+    });
   }
 }
 
@@ -25,14 +37,26 @@ async function getProduct(req, res) {
   try {
     let result = await productsService.getOneProduct(id);
     if (!result) {
-      res.status(404).json({ message: "Error al cargar el producto" });
+      throw new CustomError({
+        name: "Error al cargar el producto",
+        message: "Error al cargar el producto",
+        code: EErrors.DATABASE_ERROR,
+      });
     } else {
       res.json({ message: "Producto obtenido con éxito", data: result });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener el producto", data: err });
+    const customError = new CustomError({
+      name: "Error al obtener el producto",
+      message: "Error al obtener el producto",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    req.logger.error(customError);
+    res.status(500).json({
+      message: "Error al obtener el producto",
+      data: generateProductErrorInfo(customError, EErrors.DATABASE_ERROR),
+    });
   }
 }
 
@@ -42,18 +66,21 @@ async function saveProduct(req, res) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock || !category) {
-      CustomError.createError({
+      throw new CustomError({
         name: "Error al crear el producto",
-        cause: generateProductErrorInfo({
-          title,
-          description,
-          code,
-          price,
-          stock,
-          category,
-        }),
-        message: "Faltan datosss",
-        code: EErros.INVALID_TYPES_ERROR,
+        cause: generateProductErrorInfo(
+          {
+            title,
+            description,
+            code,
+            price,
+            stock,
+            category,
+          },
+          EErrors.INVALID_TYPES_ERROR
+        ),
+        message: "Faltan datos",
+        code: EErrors.INVALID_TYPES_ERROR,
       });
     } else {
       const product = {
@@ -69,7 +96,17 @@ async function saveProduct(req, res) {
       res.json({ message: "Producto creado con éxito", data: product });
     }
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el producto", data: err });
+    const customError = new CustomError({
+      name: "Error al crear el producto",
+      message: "Error al crear el producto",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    req.logger.error(customError);
+    res.status(500).json({
+      message: "Error al crear el producto",
+      data: generateProductErrorInfo(customError, EErrors.DATABASE_ERROR),
+    });
   }
 }
 
@@ -80,9 +117,17 @@ async function deleteProduct(req, res) {
     let result = await productsService.deleteOneProduct(id);
     res.json({ message: "Producto eliminado con éxito", data: result });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al eliminar el producto", data: err });
+    const customError = new CustomError({
+      name: "Error al eliminar el producto",
+      message: "Error al eliminar el producto",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    req.logger.error(customError);
+    res.status(500).json({
+      message: "Error al eliminar el producto",
+      data: generateProductErrorInfo(customError, EErrors.DATABASE_ERROR),
+    });
   }
 }
 // Metodo asyncrono para actualizar un producto
@@ -92,7 +137,11 @@ async function updateProduct(req, res) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock) {
-      res.status(400).json({ message: "Faltan datos" });
+      throw new CustomError({
+        name: "Error al actualizar el producto",
+        message: "Faltan datos",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
     } else {
       const product = {
         title: title,
@@ -107,9 +156,17 @@ async function updateProduct(req, res) {
       res.json({ message: "Producto actualizado con éxito", data: product });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al actualizar el producto", data: err });
+    const customError = new CustomError({
+      name: "Error al actualizar el producto",
+      message: "Error al actualizar el producto",
+      code: EErrors.DATABASE_ERROR,
+      cause: err,
+    });
+    req.logger.error(customError);
+    res.status(500).json({
+      message: "Error al actualizar el producto",
+      data: generateProductErrorInfo(customError, EErrors.DATABASE_ERROR),
+    });
   }
 }
 
