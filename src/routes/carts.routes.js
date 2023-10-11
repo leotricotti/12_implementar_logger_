@@ -9,6 +9,7 @@ import {
   populatedCart,
   manageCartProducts,
 } from "../controllers/carts.controller.js";
+import errorHandler from "../middlewares/errors/index.js";
 
 //Inicializar servicios
 const router = Router();
@@ -36,5 +37,8 @@ router.delete("/:cid", emptyCart);
 
 //Método asyncrono que finaliza la compra
 router.post("/:cid/purchase", finishPurchase);
+
+//Manejo de errores
+router.use(errorHandler);
 
 export default router;

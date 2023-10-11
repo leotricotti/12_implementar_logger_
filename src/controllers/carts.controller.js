@@ -1,15 +1,20 @@
 import { cartService } from "../repository/index.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateCartErrorInfo } from "../services/errors/info.js";
 
 //Método asyncrono para obtener todos los carritos
 async function getAll(req, res) {
-  try {
-    const carts = await cartService.getAllCarts();
-    res.json({ carts });
-  } catch (err) {
-    res.status(500).json({
-      message: "Error al obtener los carritos",
-      data: err,
+  const carts = await cartService.getAllCarts();
+  if (carts.length === 0) {
+    CustomError.createError({
+      name: "Error de base de datos",
+      cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+      message: "Error al cargar los productos",
+      code: EErrors.DATABASE_ERROR,
     });
+  } else {
+    res.json({ carts });
   }
 }
 
