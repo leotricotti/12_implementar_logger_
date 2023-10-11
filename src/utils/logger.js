@@ -37,10 +37,34 @@ const devLogger = winston.createLogger({
   ],
 });
 
+const prodLogger = winston.createLogger({
+  transports: [
+    new winston.transports.Console({
+      level: "info",
+    }),
+
+    new winston.transports.File({
+      filename: "./erros.log",
+      level: "error",
+    }),
+  ],
+});
+
 export const addLogger = (req, res, next) => {
-  req.logger = devLogger;
+  req.logger = process.env.ENVIROMENT === "production" ? devLogger : prodLogger;
+  const { body } = req;
+  let bodyData = { ...body };
+
+  if (req.method === "POST" || req.method === "PUT") {
+    bodyData = JSON.stringify(bodyData);
+  } else {
+    bodyData = "";
+  }
+
   req.logger.http(
-    `${req.method} ${req.url} - ${new Date().toLocaleTimeString()}`
+    `ruta:${req.method} ${
+      req.url
+    } - ${new Date().toLocaleTimeString()} - data:${bodyData}`
   );
   next();
 };
