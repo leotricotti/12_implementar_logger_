@@ -1,20 +1,15 @@
 import { cartService } from "../repository/index.js";
-import CustomError from "../services/errors/CustomError.js";
-import EErrors from "../services/errors/enum.js";
-import { generateCartErrorInfo } from "../services/errors/info.js";
 
 //Método asyncrono para obtener todos los carritos
 async function getAll(req, res) {
-  const carts = []; //await cartService.getAllCarts();
-  if (carts.length === 0) {
-    CustomError.createError({
-      name: "Error de base de datos",
-      cause: generateCartErrorInfo(carts, EErrors.INVALID_DATABASE_ERROR),
-      message: "Error al obtener los carritos",
-      code: EErrors.INVALID_DATABASE_ERROR,
-    });
-  } else {
+  try {
+    const carts = await cartService.getAllCarts();
     res.json({ carts });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error al obtener los carritos",
+      data: err,
+    });
   }
 }
 
@@ -31,7 +26,6 @@ async function getOne(req, res) {
       });
     }
   } catch (err) {
-    req.logger.error("Error al obtener el carrito", err);
     res.status(500).json({
       message: "Error al obtener el carrito",
       data: err,
@@ -48,7 +42,6 @@ async function populatedCart(req, res) {
       res.json({ message: "Carrito populado con éxito", data: cart });
     }
   } catch (err) {
-    req.logger.error("Error al obtener el carrito", err);
     res.status(500).json({
       message: "Error al obtener el carrito",
       data: err,
@@ -63,7 +56,6 @@ async function createCart(req, res) {
     const result = await cartService.saveOneCart(newCart);
     res.json({ message: "Carrito creado con éxito", data: newCart });
   } catch (err) {
-    req.logger.error("Error al crear el carrito", err);
     res.status(500).json({ message: "Error al crear el carrito ", data: err });
   }
 }
@@ -92,7 +84,6 @@ async function manageCartProducts(req, res) {
 
     res.json({ message: "Carrito actualizado con éxito", data: cart });
   } catch (err) {
-    req.logger.error("Error al actualizar el carrito", err);
     res.status(500).json({
       message: "Error al actualizar el carrito",
       data: err,
@@ -116,7 +107,6 @@ async function deleteProduct(req, res) {
 
     res.json({ message: "Producto eliminado con éxito", data: cart });
   } catch (err) {
-    req.logger.error("Error al eliminar el producto del carrito", err);
     res.status(500).json({
       message: "Error al eliminar el producto del carrito",
       data: err,
@@ -139,7 +129,6 @@ async function emptyCart(req, res) {
       });
     }
   } catch (err) {
-    req.logger.error("Error al vaciar el carrito", err);
     res.status(500).json({
       message: "Error al vaciar el carrito",
       data: err,

@@ -50,14 +50,8 @@ async function finishPurchase(req, res) {
       const ticket = await ticketsService.createOneTicket(newTicket);
 
       if (!ticket) {
-        req.logger.error("Error al crear el ticket");
-        res.status(500).json({ message: "Error al crear el ticket" });
+        res.status(500).json({ message: "Error al crear el ticket " });
       }
-
-      req.req.logger.info("Compra realizada con éxito", {
-        data: ticket,
-        products: productWithStock,
-      });
 
       res.json({
         message: "Compra realizada con éxito",
@@ -78,15 +72,8 @@ async function finishPurchase(req, res) {
 
       const ticket = await ticketsService.createOneTicket(newTicket);
       if (!ticket) {
-        req.logger.error("Error al crear el ticket");
-        res.status(500).json({ message: "Error al crear el ticket" });
+        res.status(500).json({ message: "Error al crear el ticket " });
       }
-
-      req.logger.info("Compra realizada con éxito", {
-        data: ticket,
-        remainingProducts: productWithOutStock,
-        products: productWithStock,
-      });
 
       res.json({
         message:
@@ -97,8 +84,7 @@ async function finishPurchase(req, res) {
       });
     }
   } catch (err) {
-    req.logger.error("Error al crear el ticket", err);
-    res.status(500).json({ message: "Error al crear el ticket", data: err });
+    res.status(500).json({ message: "Error al crear el ticket ", data: err });
   }
 }
 

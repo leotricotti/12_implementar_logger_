@@ -18,6 +18,9 @@ import { authToken, authorization } from "./utils/utils.js";
 import { Server } from "socket.io";
 import errorHandler from "./middlewares/errors/index.js";
 import { addLogger } from "./utils/logger.js";
+import CustomError from "./services/errors/CustomError.js";
+import EErrors from "./services/errors/enum.js";
+import { generateProductErrorInfo } from "./services/errors/info.js";
 
 // Inicializar servicios
 dotenv.config();
@@ -56,9 +59,9 @@ enviroment();
 
 // Routes
 app.use("/api/userCart", authToken, authorization("user"), UserCart);
-app.use("/api/carts", CartsRouter);
-app.use("/api/sessions", SessionsRouter);
-app.use("/api/products", ProductsRouter);
+app.use("/api/carts", authToken, authorization("user"), CartsRouter);
+app.use("/api/sessions", authToken, authorization("user"), SessionsRouter);
+app.use("/api/products", authToken, authorization("user"), ProductsRouter);
 app.use(
   "/api/realTimeProducts",
   authToken,
@@ -71,6 +74,20 @@ app.use(
   authorization("user"),
   MockingProducts
 );
+
+app.post("/", (req, res) => {
+  const { data } = req.body;
+  if (!data) {
+    CustomError.createError({
+      name: "Error de base de datos",
+      cause: generateProductErrorInfo(data, EErrors.DATABASE_ERROR),
+      message: "Error al cargar los productos",
+      code: EErrors.DATABASE_ERROR,
+    });
+  } else {
+    res.send("Bienvenido a la API de e-commerce");
+  }
+});
 
 app.use(errorHandler);
 

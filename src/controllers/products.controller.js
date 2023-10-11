@@ -1,51 +1,58 @@
 import { productsService } from "../repository/index.js";
-import CustomError from "../services/errors/CustomError.js";
-import EErrors from "../services/errors/enum.js";
-import { generateProductErrorInfo } from "../services/errors/info.js";
 
-// Método asyncrono para obtener todos los productos
+// Método asyncrono para obtener todos los Productsos
 async function getAll(req, res) {
   const { page, sort, category } = req.query;
-  let filteredProducts;
-  let orderedProducts;
-  let paginatedProducts;
-
-  if (category) {
-    filteredProducts = await productsService.filteredAllProducts(category);
-    req.logger.info(
-      `Se obtuvieron los productos correctamente. ${new Date().toLocaleString()}`
-    );
+  try {
+    if (category) {
+      const filteredProducts = await productsService.filteredAllProducts(
+        category
+      );
+      res.json({
+        products: filteredProducts.docs,
+      });
+    } else if (sort) {
+      const orderedProducts = await productsService.orderedAllProducts(sort);
+      res.json({
+        products: orderedProducts,
+      });
+    } else {
+      const paginatedProducts = await productsService.paginatedAllProducts(
+        page
+      );
+      res.json({
+        products: paginatedProducts.docs,
+      });
+    }
+  } catch (err) {
     res.json({
-      products: filteredProducts.docs,
-    });
-  } else if (sort) {
-    orderedProducts = await productsService.orderedAllProducts(sort);
-    req.logger.info(
-      `Se obtuvieron los productos correctamente. ${new Date().toLocaleString()}`
-    );
-    res.json({
-      products: orderedProducts,
-    });
-  } else {
-    paginatedProducts = await productsService.paginatedAllProducts(page);
-    req.logger.info(
-      `Se obtuvieron los productos correctamente. ${new Date().toLocaleString()}`
-    );
-    res.json({
-      products: paginatedProducts.docs,
-    });
-  }
-  if (!filteredProducts && !orderedProducts && !paginatedProducts) {
-    req.logger.error(
-      `Este es un error fatal. ${new Date().toLocaleTimeString()}`
-    );
-    CustomError.createError({
-      name: "Error al obtener los productos",
-      cause: generateProductErrorInfo(),
-      message: "Error al obtener los productos",
-      code: EErrors.DATABASE_ERROR,
+      message: "Error al obtener los productos.",
+      data: err,
     });
   }
 }
 
-export { getAll };
+// Método asyncrono para obtener un Productso
+async function getOne(req, res) {
+  const { pid } = req.params;
+  try {
+    const Products = await productsService.getOneProduct(pid);
+    if (Products) {
+      res.json({
+        Products: tempArray,
+        styles: "Products.styles.css",
+      });
+    } else {
+      res.status(404).json({
+        message: "Productso no encontrado",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "Error al obtener el producto",
+      data: err,
+    });
+  }
+}
+
+export { getAll, getOne };
