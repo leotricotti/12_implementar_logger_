@@ -59,9 +59,19 @@ enviroment();
 app.use("/api/userCart", authToken, authorization("user"), UserCart);
 app.use("/api/carts", authToken, authorization("user"), CartsRouter);
 app.use("/api/sessions", SessionsRouter);
-app.use("/api/products", ProductsRouter);
-app.use("/api/realTimeProducts", RealTimeProducts);
-app.use("/api/mockingProducts", MockingProducts);
+app.use("/api/products", authToken, authorization("user"), ProductsRouter);
+app.use(
+  "/api/realTimeProducts",
+  authToken,
+  authorization("admin"),
+  RealTimeProducts
+);
+app.use(
+  "/api/mockingProducts",
+  authToken,
+  authorization("user"),
+  MockingProducts
+);
 app.get("/", (req, res) => {
   req.logger.warn("Alerta"), res.send({ mensaje: "Prueba de logger" });
 });

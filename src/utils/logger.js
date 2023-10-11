@@ -19,20 +19,26 @@ const customLevelOptions = {
   },
 };
 
-const logger = winston.createLogger({
+const devLogger = winston.createLogger({
+  levels: customLevelOptions.levels,
+
+  format: winston.format.combine(
+    winston.format.colorize({ all: true }),
+    winston.format.printf(
+      ({ level, message, label, timestamp }) =>
+        `${timestamp} [${label}] ${level}: ${message}`
+    )
+  ),
+
   transports: [
     new winston.transports.Console({
-      level: "http",
-    }),
-    new winston.transports.File({
-      filename: "logs/error.log",
-      level: "warn",
+      level: "debug",
     }),
   ],
 });
 
 export const addLogger = (req, res, next) => {
-  req.logger = logger;
+  req.logger = devLogger;
   req.logger.http(
     `${req.method} ${req.url} - ${new Date().toLocaleTimeString()}`
   );
