@@ -17,15 +17,13 @@ async function getAll(req, res) {
         products: orderedProducts,
       });
     } else {
-      const paginatedProducts = await productsService.paginatedAllProducts(
-        page
-      );
+      const paginatedProducts = await productsService.paginatedAllProduct(page);
       res.json({
         products: paginatedProducts.docs,
       });
     }
   } catch (err) {
-    logger.error("Error al obtener los productos.", err);
+    req.logger.error("Error al obtener los productos.", err);
     res.status(500).json({
       message: "Error al obtener los productos.",
       data: err,

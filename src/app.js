@@ -59,7 +59,7 @@ enviroment();
 app.use("/api/userCart", authToken, authorization("user"), UserCart);
 app.use("/api/carts", CartsRouter);
 app.use("/api/sessions", SessionsRouter);
-app.use("/api/products", authToken, authorization("user"), ProductsRouter);
+app.use("/api/products", ProductsRouter);
 app.use(
   "/api/realTimeProducts",
   authToken,
