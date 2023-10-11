@@ -17,7 +17,7 @@ async function getProducts(req, res) {
       res.json({ message: "Productos obtenidos con éxito", data: result });
     }
   } catch (err) {
-    const customError = new CustomError({
+    const customError = CustomError.createError({
       name: "Error al obtener los productos",
       message: "Error al obtener los productos",
       code: EErrors.DATABASE_ERROR,

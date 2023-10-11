@@ -6,38 +6,33 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 // Método asyncrono para obtener todos los productos
 async function getAll(req, res) {
   const { page, sort, category } = req.query;
-  try {
-    if (category) {
-      const filteredProducts = await productsService.filteredAllProducts(
-        category
-      );
-      res.json({
-        products: filteredProducts.docs,
-      });
-    } else if (sort) {
-      const orderedProducts = await productsService.orderedAllProducts(sort);
-      res.json({
-        products: orderedProducts,
-      });
-    } else {
-      const paginatedProducts = await productsService.paginatedAllProduct(page);
-      res.json({
-        products: paginatedProducts.docs,
-      });
-    }
-  } catch (err) {
-    req.logger.error("Error al obtener los productos", err);
-    const customError = CustomError.createError({
-      name: "Error al obtener los productos",
-      cause: generateProductErrorInfo(),
-      message: "Error al obtener los productos",
-      code: EErrors.DATABASE_ERROR,
+  if (category) {
+    const filteredProducts = await productsService.filteredAllProducts(
+      category
+    );
+    res.json({
+      products: filteredProducts.docs,
     });
-    res.status(500).json({
-      message: "Error al obtener los productos",
-      data: customError,
+  } else if (sort) {
+    const orderedProducts = await productsService.orderedAllProducts(sort);
+    res.json({
+      products: orderedProducts,
+    });
+  } else {
+    const paginatedProducts = await productsService.paginatedAllProduct(page);
+    res.json({
+      products: paginatedProducts.docs,
     });
   }
+  req.logger.error(
+    `Este es un error fatal. ${new Date().toLocaleTimeString()}`
+  );
+  CustomError.createError({
+    name: "Error al obtener los productos",
+    cause: generateProductErrorInfo(),
+    message: "Error al obtener los productos",
+    code: EErrors.DATABASE_ERROR,
+  });
 }
 
 export { getAll };
