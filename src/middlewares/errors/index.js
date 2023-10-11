@@ -1,10 +1,10 @@
 import EErrors from "../../services/errors/enum.js";
 
 export default (err, req, res, next) => {
+  console.log("error handler");
   console.log(err);
   switch (err.code) {
     case EErrors.INVALID_TYPES_ERROR:
-      console.log("error de tipos");
       res.send({
         status: "error",
         err: err.name,

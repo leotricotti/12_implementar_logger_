@@ -9,26 +9,10 @@ const customLevelOptions = {
     http: 4,
     debug: 5,
   },
-  colors: {
-    fatal: "red",
-    error: "orange",
-    warn: "yellow",
-    info: "green",
-    http: "blue",
-    debug: "purple",
-  },
 };
 
 const devLogger = winston.createLogger({
   levels: customLevelOptions.levels,
-
-  format: winston.format.combine(
-    winston.format.colorize({ all: true }),
-    winston.format.printf(
-      ({ level, message, label, timestamp }) =>
-        `${timestamp} [${label}] ${level}: ${message}`
-    )
-  ),
 
   transports: [
     new winston.transports.Console({

@@ -8,13 +8,13 @@ async function getProducts(req, res) {
   try {
     let result = await productsService.getAllProducts();
     if (!result) {
-      throw new CustomError({
-        name: "Error al cargar los productos",
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(EErrors.DATABASE_ERROR),
         message: "Error al cargar los productos",
         code: EErrors.DATABASE_ERROR,
       });
     } else {
-      res.json({ message: "Productos obtenidos con éxito", data: result });
     }
   } catch (err) {
     const customError = CustomError.createError({

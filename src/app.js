@@ -35,7 +35,6 @@ app.use(addLogger);
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
-app.use(errorHandler);
 
 // Passport
 githubStrategy();
@@ -72,6 +71,8 @@ app.use(
   authorization("user"),
   MockingProducts
 );
+
+app.use(errorHandler);
 
 // Server
 const httpServer = app.listen(PORT, () => {

@@ -2,6 +2,7 @@ import EErrors from "./enum.js";
 
 const generateProductErrorInfo = (product, errorType) => {
   let errorMessage = "";
+  console.log(product);
   switch (errorType) {
     case EErrors.INVALID_TYPES_ERROR:
       errorMessage = `One or more products have invalid types:
@@ -25,4 +26,25 @@ const generateProductErrorInfo = (product, errorType) => {
   return errorMessage;
 };
 
-export { generateProductErrorInfo };
+const generateCartErrorInfo = (cart, errorType) => {
+  let errorMessage = "";
+  switch (errorType) {
+    case EErrors.INVALID_TYPES_ERROR:
+      errorMessage = `One or more products have invalid types:
+        List of required types:
+        * product: mongoose.Schema.Types.ObjectId ${typeof cart.product}
+        * quantity: number ${typeof cart.quantity}
+      `;
+      break;
+    case EErrors.DATABASE_ERROR:
+      errorMessage = "Error al acceder a la base de datos";
+      break;
+    case EErrors.ROUTING_ERROR:
+    default:
+      errorMessage = "Error en la ruta";
+      break;
+  }
+  return errorMessage;
+};
+
+export { generateProductErrorInfo, generateCartErrorInfo };
