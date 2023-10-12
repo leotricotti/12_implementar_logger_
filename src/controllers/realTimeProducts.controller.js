@@ -6,7 +6,7 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 // Método asyncrono para obtener los productos en tiempo real
 async function getProducts(req, res, next) {
   try {
-    let result = []; // await productsService.getAllProducts();
+    let result = await productsService.getAllProducts();
     if (result.length === 0) {
       CustomError.createError({
         name: "Error de base de datos",
@@ -26,6 +26,14 @@ async function getProducts(req, res, next) {
 async function getProduct(req, res, next) {
   const { id } = req.params;
   try {
+    if (!id) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateProductErrorInfo(id, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al obtener su productos",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     let result = await productsService.getOneProduct(id);
     if (result.length === 0) {
       CustomError.createError({
@@ -87,6 +95,14 @@ async function saveProduct(req, res, next) {
 async function deleteProduct(req, res, next) {
   const { id } = req.params;
   try {
+    if (!id) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateProductErrorInfo(id, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al eliminar el producto",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     let result = await productsService.deleteOneProduct(id);
     if (result.length === 0) {
       CustomError.createError({

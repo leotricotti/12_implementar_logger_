@@ -26,6 +26,15 @@ async function getAll(req, res, next) {
 async function getOne(req, res, next) {
   const { cid } = req.params;
   try {
+    if (!cid) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al cargar el carrito",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
+
     const cart = await cartService.getOneCart(cid);
     if (cart.length === 0) {
       CustomError.createError({
@@ -46,6 +55,14 @@ async function getOne(req, res, next) {
 async function populatedCart(req, res, next) {
   const { cid } = req.params;
   try {
+    if (!cid) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al popular un carrito",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const cart = await cartService.populatedOneCart(cid);
     if (!cart) {
       CustomError.createError({
@@ -66,6 +83,14 @@ async function populatedCart(req, res, next) {
 async function createCart(req, res, next) {
   try {
     const newCart = req.body;
+    if (!newCart) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(newCart, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al crear el carrito",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const result = await cartService.saveOneCart(newCart);
     if (!result.products) {
       CustomError.createError({
@@ -88,6 +113,15 @@ async function manageCartProducts(req, res, next) {
   const { op } = req.body;
 
   try {
+    if (!cid || !pid || !op) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al agregar productos al carrito",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
+
     const cart = await cartService.getOneCart(cid);
     if (!cart.products) {
       CustomError.createError({
@@ -131,6 +165,14 @@ async function manageCartProducts(req, res, next) {
 async function deleteProduct(req, res, next) {
   const { cid, pid } = req.params;
   try {
+    if (!cid || !pid) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al eliminar el producto",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const cart = await cartService.getOneCart(cid);
     CustomError.createError({
       name: "Error de base de datos",
@@ -166,6 +208,14 @@ async function deleteProduct(req, res, next) {
 async function emptyCart(req, res, next) {
   const { cid } = req.params;
   try {
+    if (!cid) {
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al vaciar el carrito",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const cart = await cartService.getOneCart(cid);
     if (cart.length === 0) {
       CustomError.createError({

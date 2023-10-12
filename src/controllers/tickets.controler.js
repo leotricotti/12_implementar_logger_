@@ -11,6 +11,15 @@ async function finishPurchase(req, res, next) {
   const { cid } = req.params;
 
   try {
+    if (!username || !totalPurchase || !products || !cid) {
+      const result = [username, totalPurchase, products, cid];
+      CustomError.createError({
+        name: "Error de tipo de dato",
+        cause: generateTicketErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al finalizar la compra",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const cart = await cartService.getOneCart(cid);
 
     // Filtrar los productos que no tienen stock

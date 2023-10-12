@@ -32,10 +32,9 @@ async function failRegister(req, res, next) {
 //Ruta que realiza el login
 async function loginUser(req, res, next) {
   const { username, password } = req.body;
-  console.log(username, password);
   try {
-    if (username || password) {
-      const result = e[(username, password)];
+    if (!username || !password) {
+      const result = [username, password];
       CustomError.createError({
         name: "Error de sesión",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
@@ -87,6 +86,15 @@ async function failLogin(req, res, next) {
 async function forgotPassword(req, res) {
   const { username, newPassword } = req.body;
   try {
+    if (!username || !newPassword) {
+      const result = [username, newPassword];
+      CustomError.createError({
+        name: "Error de sesión",
+        cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al iniciar sesion",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
     const result = await usersService.getOneUser(username);
 
     if (result.length === 0) {
