@@ -1,18 +1,18 @@
 import EErrors from "./enum.js";
 
-const generateProductErrorInfo = (product, errorType) => {
+// Función para generar el mensaje de error
+const generateProductErrorInfo = (data, errorType) => {
   let errorMessage = "";
-  console.log(product);
   switch (errorType) {
     case EErrors.INVALID_TYPES_ERROR:
       errorMessage = `One or more products have invalid types:
         List of required types:
-        * title: string ${typeof product.title}
-        * description: string ${typeof product.description}
-        * code: string ${typeof product.code}
-        * price: number ${typeof product.price}
-        * stock: number ${typeof product.stock}
-        * category: string ${typeof product.category}
+        * title: string ${typeof data.title}
+        * description: string ${typeof data.description}
+        * code: string ${typeof data.code}
+        * price: number ${typeof data.price}
+        * stock: number ${typeof data.stock}
+        * category: string ${typeof data.category}
       `;
       break;
     case EErrors.DATABASE_ERROR:
@@ -26,6 +26,7 @@ const generateProductErrorInfo = (product, errorType) => {
   return errorMessage;
 };
 
+// Función para generar el mensaje de error
 const generateCartErrorInfo = (cart, errorType) => {
   let errorMessage = "";
   switch (errorType) {
@@ -47,4 +48,30 @@ const generateCartErrorInfo = (cart, errorType) => {
   return errorMessage;
 };
 
-export { generateProductErrorInfo, generateCartErrorInfo };
+// Función para generar el mensaje de error
+const generateSessionErrorInfo = (session, errorType) => {
+  let errorMessage = "";
+  switch (errorType) {
+    case EErrors.INVALID_TYPES_ERROR:
+      errorMessage = `One or more products have invalid types:
+        List of required types:
+        * user: string ${typeof session.user}
+        * password: string ${typeof session.password}
+      `;
+      break;
+    case EErrors.DATABASE_ERROR:
+      errorMessage = "Error al acceder a la base de datos";
+      break;
+    case EErrors.ROUTING_ERROR:
+    default:
+      errorMessage = "Error en la ruta";
+      break;
+  }
+  return errorMessage;
+};
+
+export {
+  generateProductErrorInfo,
+  generateCartErrorInfo,
+  generateSessionErrorInfo,
+};

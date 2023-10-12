@@ -6,7 +6,7 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 // Método asyncrono para obtener los productos en tiempo real
 async function getProducts(req, res, next) {
   try {
-    let result = await productsService.getAllProducts();
+    let result = []; // await productsService.getAllProducts();
     if (result.length === 0) {
       CustomError.createError({
         name: "Error de base de datos",
@@ -48,17 +48,10 @@ async function saveProduct(req, res, next) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock || !category) {
+      const data = { title, description, code, price, stock, category };
       CustomError.createError({
         name: "Error de tipo de datos",
-        cause: generateProductErrorInfo(
-          title,
-          description,
-          code,
-          price,
-          stock,
-          category,
-          EErrors.INVALID_TYPES_ERROR
-        ),
+        cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
         message: "Error al crear el producto",
         code: EErrors.INVALID_TYPES_ERROR,
       });
@@ -72,13 +65,14 @@ async function saveProduct(req, res, next) {
         category: category,
         thumbnail: thumbnail,
       };
+
       let result = await productsService.saveOneProduct(product);
-      console.log(result);
-      if (result.length === 0) {
+
+      if (!result) {
         CustomError.createError({
           name: "Error de base de datos",
           cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
-          message: "Error al obtener los productos",
+          message: "Error al crear el producto",
           code: EErrors.DATABASE_ERROR,
         });
       }
@@ -90,15 +84,22 @@ async function saveProduct(req, res, next) {
 }
 
 // Metodo asyncrono para eliminar un producto
-async function deleteProduct(req, res) {
+async function deleteProduct(req, res, next) {
   const { id } = req.params;
   try {
     let result = await productsService.deleteOneProduct(id);
-    res.json({ message: "Producto eliminado con éxito", data: result });
+    if (result.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+        message: "Error al eliminar el producto",
+        code: EErrors.DATABASE_ERROR,
+      });
+    } else {
+      res.json({ message: "Producto eliminado con éxito", data: result });
+    }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al eliminar el producto", data: err });
+    next(err);
   }
 }
 // Metodo asyncrono para actualizar un producto
@@ -108,7 +109,13 @@ async function updateProduct(req, res) {
     req.body;
   try {
     if (!title || !description || !price || !code || !stock) {
-      res.status(400).json({ message: "Faltan datos" });
+      const data = { title, description, code, price, stock, category };
+      CustomError.createError({
+        name: "Error de tipo de datos",
+        cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al actualizar el producto",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
     } else {
       const product = {
         title: title,
@@ -120,12 +127,18 @@ async function updateProduct(req, res) {
         thumbnail: thumbnail,
       };
       let result = await productsService.updateOneProduct(id, product);
+      if (!result) {
+        CustomError.createError({
+          name: "Error de base de datos",
+          cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+          message: "Error al actualizar el producto",
+          code: EErrors.DATABASE_ERROR,
+        });
+      }
       res.json({ message: "Producto actualizado con éxito", data: product });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al actualizar el producto", data: err });
+    next(err);
   }
 }
 
