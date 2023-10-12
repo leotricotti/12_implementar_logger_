@@ -54,7 +54,7 @@ async function finishPurchase(req, res, next) {
 
       if (!ticket) {
         CustomError.createError({
-          name: "Error de tipos de datos",
+          name: "Error de base de datos",
           cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
           message: "Error al crear el ticket",
           code: EErrors.DATABASE_ERROR,
