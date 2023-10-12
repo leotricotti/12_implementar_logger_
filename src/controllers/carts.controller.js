@@ -15,7 +15,6 @@ async function getAll(req, res, next) {
         message: "Error al cargar los carritos",
         code: EErrors.DATABASE_ERROR,
       });
-      next();
     } else {
       res.json({ carts });
     }
@@ -33,10 +32,9 @@ async function getOne(req, res, next) {
       CustomError.createError({
         name: "Error de base de datos",
         cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
-        message: "Error al cargar un carrito",
+        message: "Error al cargar el carrito",
         code: EErrors.DATABASE_ERROR,
       });
-      next();
     } else {
       res.json(cart);
     }
@@ -46,7 +44,7 @@ async function getOne(req, res, next) {
 }
 
 //Método asyncrono para popular el carrito
-async function populatedCart(req, res) {
+async function populatedCart(req, res, next) {
   const { cid } = req.params;
   try {
     const cart = await cartService.populatedOneCart(cid);
@@ -54,10 +52,9 @@ async function populatedCart(req, res) {
       CustomError.createError({
         name: "Error de base de datos",
         cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
-        message: "Error al cargar al popular un carrito",
+        message: "Error al popular un carrito",
         code: EErrors.DATABASE_ERROR,
       });
-      next();
     } else {
       res.json({ message: "Carrito populado con éxito", data: cart });
     }
@@ -67,52 +64,81 @@ async function populatedCart(req, res) {
 }
 
 //Método asyncrono para crear un carrito
-async function createCart(req, res) {
+async function createCart(req, res, next) {
   try {
     const newCart = req.body;
     const result = await cartService.saveOneCart(newCart);
-    res.json({ message: "Carrito creado con éxito", data: newCart });
+    if (!result.products) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(newCart, EErrors.DATABASE_ERROR),
+        message: "Error al crear el carrito",
+        code: EErrors.DATABASE_ERROR,
+      });
+    } else {
+      res.json({ message: "Carrito creado con éxito", data: newCart });
+    }
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el carrito ", data: err });
+    next(err);
   }
 }
 
-async function manageCartProducts(req, res) {
+// Metodo asyncrono para agregar productos al carrito
+async function manageCartProducts(req, res, next) {
   const { cid, pid } = req.params;
   const { op } = req.body;
 
   try {
     const cart = await cartService.getOneCart(cid);
-    const productExist = cart.products.findIndex((product) =>
-      product.product == pid ? true : false
-    );
-
-    if (productExist === -1) {
-      cart.products.push({ product: pid, quantity: 1 });
+    if (!cart.products) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al obtener el carrito",
+        code: EErrors.DATABASE_ERROR,
+      });
     } else {
-      if (op === "add") {
-        cart.products[productExist].quantity += 1;
-      } else if (op === "substract") {
-        cart.products[productExist].quantity -= 1;
+      const productExist = cart.products.findIndex((product) =>
+        product.product == pid ? true : false
+      );
+
+      if (productExist === -1) {
+        cart.products.push({ product: pid, quantity: 1 });
+      } else {
+        if (op === "add") {
+          cart.products[productExist].quantity += 1;
+        } else if (op === "substract") {
+          cart.products[productExist].quantity -= 1;
+        }
+      }
+      const result = await cartService.updateOneCart(cid, cart);
+      if (!result) {
+        CustomError.createError({
+          name: "Error de base de datos",
+          cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+          message: "Error al actualizar el carrito",
+          code: EErrors.DATABASE_ERROR,
+        });
+      } else {
+        res.json({ message: "Carrito actualizado con éxito", data: cart });
       }
     }
-
-    const result = await cartService.updateOneCart(cid, cart);
-
-    res.json({ message: "Carrito actualizado con éxito", data: cart });
   } catch (err) {
-    res.status(500).json({
-      message: "Error al actualizar el carrito",
-      data: err,
-    });
+    next(err);
   }
 }
 
 //Método asyncrono para eliminar productos del carrito
-async function deleteProduct(req, res) {
+async function deleteProduct(req, res, next) {
   const { cid, pid } = req.params;
   try {
     const cart = await cartService.getOneCart(cid);
+    CustomError.createError({
+      name: "Error de base de datos",
+      cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+      message: "Error al eliminar el producto",
+      code: EErrors.DATABASE_ERROR,
+    });
 
     let productExistsInCarts = cart.products.findIndex(
       (dato) => dato.product == pid
@@ -121,35 +147,47 @@ async function deleteProduct(req, res) {
     cart.products.splice(productExistsInCarts, 1);
 
     const result = await cartService.updateOneCart(cid, cart);
+    console.log(result);
+    if (!result) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al actualizar el carrito",
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
 
     res.json({ message: "Producto eliminado con éxito", data: cart });
   } catch (err) {
-    res.status(500).json({
-      message: "Error al eliminar el producto del carrito",
-      data: err,
-    });
+    next(err);
   }
 }
 
 //Método asyncrono para vaciar el carrito
-async function emptyCart(req, res) {
+async function emptyCart(req, res, next) {
   const { cid } = req.params;
   try {
     const cart = await cartService.getOneCart(cid);
-    if (cart) {
-      cart.products = [];
-      const result = await cartService.updateOneCart(cid, cart);
-      res.json({ message: "Carrito vaciado con éxito", data: cart });
-    } else {
-      res.status(404).json({
-        message: "Carrito no encontrado",
+    if (cart.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al vaciar el carrito",
+        code: EErrors.DATABASE_ERROR,
       });
+    } else {
+      if (cart) {
+        cart.products = [];
+        const result = await cartService.updateOneCart(cid, cart);
+        res.json({ message: "Carrito vaciado con éxito", data: cart });
+      } else {
+        res.status(404).json({
+          message: "Carrito no encontrado",
+        });
+      }
     }
   } catch (err) {
-    res.status(500).json({
-      message: "Error al vaciar el carrito",
-      data: err,
-    });
+    next(err);
   }
 }
 

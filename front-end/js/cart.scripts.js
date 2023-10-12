@@ -190,7 +190,7 @@ const deleteProduct = async (idProduct) => {
 };
 
 //Elimina todos los productos del carrito
-const deleteAllProducts = async () => {
+const emptyCart = async () => {
   //Obtener cartId de localStorage
   const cartId = localStorage.getItem("cartId");
   const response = await fetch(`http://localhost:8080/api/carts/${cartId}`, {
@@ -200,7 +200,10 @@ const deleteAllProducts = async () => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
+};
 
+//Elimina todos los productos del carrito
+const deleteAllProducts = async () => {
   Swal.fire({
     title: "¿Estás seguro?",
     text: "¡No podrás revertir esto!",
@@ -223,12 +226,11 @@ const deleteAllProducts = async () => {
           popup: "animate__animated animate__zoomIn",
         },
       });
+      emptyCart();
+      cartBadge();
+      showCartProducts();
     }
   });
-
-  showCartProducts();
-  cartBadge();
-  return response;
 };
 
 //Direccionar a la pagina de productos anterior
