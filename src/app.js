@@ -18,9 +18,6 @@ import { authToken, authorization } from "./utils/utils.js";
 import { Server } from "socket.io";
 import errorHandler from "./middlewares/errors/index.js";
 import { addLogger } from "./utils/logger.js";
-import CustomError from "./services/errors/CustomError.js";
-import EErrors from "./services/errors/enum.js";
-import { generateCartErrorInfo } from "./services/errors/info.js";
 
 // Inicializar servicios
 dotenv.config();
@@ -61,13 +58,8 @@ enviroment();
 app.use("/api/userCart", authToken, authorization("user"), UserCart);
 app.use("/api/carts", CartsRouter);
 app.use("/api/sessions", SessionsRouter);
-app.use("/api/products", authToken, authorization("user"), ProductsRouter);
-app.use(
-  "/api/realTimeProducts",
-  authToken,
-  authorization("admin"),
-  RealTimeProducts
-);
+app.use("/api/products", ProductsRouter);
+app.use("/api/realTimeProducts", RealTimeProducts);
 app.use(
   "/api/mockingProducts",
   authToken,

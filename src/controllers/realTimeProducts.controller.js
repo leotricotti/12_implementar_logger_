@@ -1,45 +1,67 @@
 import { productsService } from "../repository/index.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 // Método asyncrono para obtener los productos en tiempo real
-async function getProducts(req, res) {
+async function getProducts(req, res, next) {
   try {
     let result = await productsService.getAllProducts();
-    if (!result) {
-      res.status(404).json({ message: "Error al cargar los productos" });
+    if (result.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+        message: "Error al obtener los productos",
+        code: EErrors.DATABASE_ERROR,
+      });
     } else {
       res.json({ message: "Productos obtenidos con éxito", data: result });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener los productos", data: err });
+    next(err);
   }
 }
 
 // Método asyncrono para obtener un producto en tiempo real
-async function getProduct(req, res) {
+async function getProduct(req, res, next) {
   const { id } = req.params;
   try {
     let result = await productsService.getOneProduct(id);
-    if (!result) {
-      res.status(404).json({ message: "Error al cargar el producto" });
+    if (result.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+        message: "Error al obtener su productos",
+        code: EErrors.DATABASE_ERROR,
+      });
     } else {
       res.json({ message: "Producto obtenido con éxito", data: result });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener el producto", data: err });
+    next(err);
   }
 }
 
 //Metodo asyncrono para guardar un producto
-async function saveProduct(req, res) {
+async function saveProduct(req, res, next) {
   const { title, description, code, price, stock, category, thumbnail } =
     req.body;
   try {
-    if (!title || !description || !price || !code || !stock) {
-      res.status(400).json({ message: "Faltan datos" });
+    if (!title || !description || !price || !code || !stock || !category) {
+      CustomError.createError({
+        name: "Error de tipo de datos",
+        cause: generateProductErrorInfo(
+          title,
+          description,
+          code,
+          price,
+          stock,
+          category,
+          EErrors.INVALID_TYPES_ERROR
+        ),
+        message: "Error al crear el producto",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
     } else {
       const product = {
         title: title,
@@ -51,10 +73,19 @@ async function saveProduct(req, res) {
         thumbnail: thumbnail,
       };
       let result = await productsService.saveOneProduct(product);
+      console.log(result);
+      if (result.length === 0) {
+        CustomError.createError({
+          name: "Error de base de datos",
+          cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+          message: "Error al obtener los productos",
+          code: EErrors.DATABASE_ERROR,
+        });
+      }
       res.json({ message: "Producto creado con éxito", data: product });
     }
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el producto", data: err });
+    next(err);
   }
 }
 
