@@ -1,40 +1,47 @@
+import { ne } from "@faker-js/faker";
 import { cartService } from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateCartErrorInfo } from "../services/errors/info.js";
 
 //Método asyncrono para obtener todos los carritos
-async function getAll(req, res) {
-  const carts = await cartService.getAllCarts();
-  if (carts.length === 0) {
-    CustomError.createError({
-      name: "Error de base de datos",
-      cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
-      message: "Error al cargar los productos",
-      code: EErrors.DATABASE_ERROR,
-    });
-  } else {
-    res.json({ carts });
+async function getAll(req, res, next) {
+  try {
+    const carts = await cartService.getAllCarts();
+    if (carts.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+        message: "Error al cargar los carritos",
+        code: EErrors.DATABASE_ERROR,
+      });
+      next();
+    } else {
+      res.json({ carts });
+    }
+  } catch (err) {
+    next(err);
   }
 }
 
 //Método asyncrono para obtener un carrito
-async function getOne(req, res) {
+async function getOne(req, res, next) {
   const { cid } = req.params;
   try {
     const cart = await cartService.getOneCart(cid);
-    if (cart) {
-      res.json(cart);
-    } else {
-      res.status(404).json({
-        message: "Carrito no encontrado",
+    if (cart.length === 0) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al cargar un carrito",
+        code: EErrors.DATABASE_ERROR,
       });
+      next();
+    } else {
+      res.json(cart);
     }
   } catch (err) {
-    res.status(500).json({
-      message: "Error al obtener el carrito",
-      data: err,
-    });
+    next(err);
   }
 }
 
@@ -43,14 +50,19 @@ async function populatedCart(req, res) {
   const { cid } = req.params;
   try {
     const cart = await cartService.populatedOneCart(cid);
-    if (cart) {
+    if (!cart) {
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateCartErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al cargar al popular un carrito",
+        code: EErrors.DATABASE_ERROR,
+      });
+      next();
+    } else {
       res.json({ message: "Carrito populado con éxito", data: cart });
     }
   } catch (err) {
-    res.status(500).json({
-      message: "Error al obtener el carrito",
-      data: err,
-    });
+    next(err);
   }
 }
 
