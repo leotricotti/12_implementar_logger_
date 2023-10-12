@@ -1,9 +1,12 @@
 import { ticketsService } from "../repository/index.js";
 import { cartService } from "../repository/index.js";
 import { productsService } from "../repository/index.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateTicketErrorInfo } from "../services/errors/info.js";
 
 //Metodo asyncrono para finalizar la compra
-async function finishPurchase(req, res) {
+async function finishPurchase(req, res, next) {
   const { username, totalPurchase, products } = req.body;
   const { cid } = req.params;
 
@@ -50,7 +53,12 @@ async function finishPurchase(req, res) {
       const ticket = await ticketsService.createOneTicket(newTicket);
 
       if (!ticket) {
-        res.status(500).json({ message: "Error al crear el ticket " });
+        CustomError.createError({
+          name: "Error de tipos de datos",
+          cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
+          message: "Error al crear el ticket",
+          code: EErrors.DATABASE_ERROR,
+        });
       }
 
       res.json({
@@ -72,7 +80,12 @@ async function finishPurchase(req, res) {
 
       const ticket = await ticketsService.createOneTicket(newTicket);
       if (!ticket) {
-        res.status(500).json({ message: "Error al crear el ticket " });
+        CustomError.createError({
+          name: "Error de tipos de datos",
+          cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
+          message: "Error al crear el ticket",
+          code: EErrors.DATABASE_ERROR,
+        });
       }
 
       res.json({
@@ -84,7 +97,7 @@ async function finishPurchase(req, res) {
       });
     }
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el ticket ", data: err });
+    next(err);
   }
 }
 

@@ -70,8 +70,32 @@ const generateSessionErrorInfo = (session, errorType) => {
   return errorMessage;
 };
 
+const generateTicketErrorInfo = (ticket, errorType) => {
+  let errorMessage = "";
+  switch (errorType) {
+    case EErrors.INVALID_TYPES_ERROR:
+      errorMessage = `One or more products have invalid types:
+        List of required types:
+        * code: string ${typeof ticket.code}
+        * purchase_datetime: string ${typeof ticket.purchase_datetime}
+        * amount: number ${typeof ticket.amount}
+        * purchaser: string ${typeof ticket.purchaser}
+      `;
+      break;
+    case EErrors.DATABASE_ERROR:
+      errorMessage = "Error al acceder a la base de datos";
+      break;
+    case EErrors.ROUTING_ERROR:
+    default:
+      errorMessage = "Error en la ruta";
+      break;
+  }
+  return errorMessage;
+};
+
 export {
   generateProductErrorInfo,
   generateCartErrorInfo,
   generateSessionErrorInfo,
+  generateTicketErrorInfo,
 };

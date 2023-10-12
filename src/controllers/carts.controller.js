@@ -1,4 +1,3 @@
-import { ne } from "@faker-js/faker";
 import { cartService } from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
