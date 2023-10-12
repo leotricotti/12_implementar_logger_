@@ -55,7 +55,7 @@ const generateSessionErrorInfo = (session, errorType) => {
     case EErrors.INVALID_TYPES_ERROR:
       errorMessage = `One or more products have invalid types:
         List of required types:
-        * user: string ${typeof session.user}
+        * username: string ${typeof session.username}
         * password: string ${typeof session.password}
       `;
       break;
