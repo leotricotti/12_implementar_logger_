@@ -26,7 +26,7 @@ async function getAll(req, res, next) {
         products: filteredProducts.docs,
       });
     } else if (sort) {
-      const orderedProducts = []; // await productsService.orderedAllProducts(sort);
+      const orderedProducts = await productsService.orderedAllProducts(sort);
       if (orderedProducts.length === 0) {
         CustomError.createError({
           name: "Error de base de datos",
