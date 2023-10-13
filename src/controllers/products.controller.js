@@ -12,6 +12,9 @@ async function getAll(req, res, next) {
         category
       );
       if (filteredProducts.length === 0) {
+        req.logger.error(
+          `Error de base de datos: Error al obtener los productos filtrados ${new Date().toLocaleString()}`
+        );
         CustomError.createError({
           name: "Error de base de datos",
           cause: generateProductErrorInfo(
@@ -21,13 +24,19 @@ async function getAll(req, res, next) {
           message: "Error al obtener los productos filtrados",
           code: EErrors.DATABASE_ERROR,
         });
+      } else {
+        req.logger.info("Productos filtrados con éxito");
+        res.json({
+          message: "Productos filtrados con éxito",
+          products: filteredProducts.docs,
+        });
       }
-      res.json({
-        products: filteredProducts.docs,
-      });
     } else if (sort) {
       const orderedProducts = await productsService.orderedAllProducts(sort);
       if (orderedProducts.length === 0) {
+        req.logger.error(
+          `Error de base de datos: Error al obtener los productos ordenados ${new Date().toLocaleString()}`
+        );
         CustomError.createError({
           name: "Error de base de datos",
           cause: generateProductErrorInfo(
@@ -37,15 +46,21 @@ async function getAll(req, res, next) {
           message: "Error al obtener los productos ordenados",
           code: EErrors.DATABASE_ERROR,
         });
+      } else {
+        req.logger.info("Productos odenados con éxito");
+        res.json({
+          message: "Productos ordenados con éxito",
+          products: orderedProducts,
+        });
       }
-      res.json({
-        products: orderedProducts,
-      });
     } else {
       const paginatedProducts = await productsService.paginatedAllProducts(
         page
       );
       if (paginatedProducts.length === 0) {
+        req.logger.error(
+          `Error de base de datos: Error al obtener los productos paginados ${new Date().toLocaleString()}`
+        );
         CustomError.createError({
           name: "Error de base de datos",
           cause: generateProductErrorInfo(
@@ -55,10 +70,13 @@ async function getAll(req, res, next) {
           message: "Error al obtener los productos paginados",
           code: EErrors.DATABASE_ERROR,
         });
+      } else {
+        req.logger.info("Productos paginados con éxito");
+        res.json({
+          message: "Productos paginados con éxito",
+          products: paginatedProducts.docs,
+        });
       }
-      res.json({
-        products: paginatedProducts.docs,
-      });
     }
   } catch (err) {
     next(err);
