@@ -1,3 +1,4 @@
+import { el } from "@faker-js/faker";
 import { ticketsService } from "../repository/index.js";
 import { cartService } from "../repository/index.js";
 import { productsService } from "../repository/index.js";
@@ -12,6 +13,9 @@ async function finishPurchase(req, res, next) {
 
   try {
     if (!username || !totalPurchase || !products || !cid) {
+      req.logger.error(
+        `Error de tipo de dato: Error al finalizar la compra ${new Date().toLocaleString()}`
+      );
       const result = [username, totalPurchase, products, cid];
       CustomError.createError({
         name: "Error de tipo de dato",
@@ -21,6 +25,17 @@ async function finishPurchase(req, res, next) {
       });
     }
     const cart = await cartService.getOneCart(cid);
+    if (cart.length === 0) {
+      req.logger.error(
+        `Error de base de datos: Error al finalizar la compra ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateTicketErrorInfo(cart, EErrors.DATABASE_ERROR),
+        message: "Error al finalizar la compra",
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
 
     // Filtrar los productos que no tienen stock
     const productWithOutStock = await products.filter((product) =>
@@ -62,6 +77,10 @@ async function finishPurchase(req, res, next) {
       const ticket = await ticketsService.createOneTicket(newTicket);
 
       if (!ticket) {
+        req.logger.error({
+          message: `Error de base de datos: Error al crear el ticket ${new Date().toLocaleString()}`,
+        });
+
         CustomError.createError({
           name: "Error de base de datos",
           cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
@@ -69,7 +88,9 @@ async function finishPurchase(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       }
-
+      req.logger.info(
+        `Compra realizada con éxito ${new Date().toLocaleString()}`
+      );
       res.json({
         message: "Compra realizada con éxito",
         data: ticket,
@@ -88,6 +109,7 @@ async function finishPurchase(req, res, next) {
       };
 
       const ticket = await ticketsService.createOneTicket(newTicket);
+
       if (!ticket) {
         CustomError.createError({
           name: "Error de base de datos",
@@ -96,7 +118,9 @@ async function finishPurchase(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       }
-
+      req.logger.info(
+        `Compra realizada con éxito ${new Date().toLocaleString()}`
+      );
       res.json({
         message:
           "Compra realizada con éxito. Los siguietes productos no se pudieron comprar por falta de stock:",

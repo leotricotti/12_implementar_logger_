@@ -144,7 +144,9 @@ async function manageCartProducts(req, res, next) {
 
   try {
     if (!cid || !pid || !op) {
-      req.logger.error(`Error de tipo de dato ${new Date().toLocaleString()}`);
+      req.logger.error(
+        `Error de tipo de dato: Error al agregar productos al carrito ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
@@ -203,7 +205,9 @@ async function deleteProduct(req, res, next) {
   const { cid, pid } = req.params;
   try {
     if (!cid || !pid) {
-      req.logger.error(`Error de tipo de dato ${new Date().toLocaleString()}`);
+      req.logger.error(
+        `Error de tipo de dato: Error al eliminar el producto ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
@@ -257,7 +261,9 @@ async function emptyCart(req, res, next) {
   const { cid } = req.params;
   try {
     if (!cid) {
-      req.logger.error(`Error de tipo de dato ${new Date().toLocaleString()}`);
+      req.logger.error(
+        `Error de tipo de dato: Error al vaciar el carrito ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),

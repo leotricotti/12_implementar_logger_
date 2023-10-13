@@ -14,14 +14,18 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 //Ruta que realiza el registro
 async function signupUser(req, res) {
+  req.logger.info(`Usuario creado con éxito ${new Date().toLocaleString()}`);
   res.status(200).json({ message: "Usuario creado con éxito" });
 }
 
 //Ruta que se ejecuta cuando falla el registro
 async function failRegister(req, res, next) {
   const result = [];
+  req.logger.error(
+    `Error de base de datos: Error al crear el usuario ${new Date().toLocaleString()}`
+  );
   CustomError.createError({
-    name: "Error de sesión",
+    name: "Error de base de datos",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
     message: "Error al crear el usuario",
     code: EErrors.DATABASE_ERROR,
@@ -35,10 +39,13 @@ async function loginUser(req, res, next) {
   try {
     if (!username || !password) {
       const result = [username, password];
+      req.logger.error(
+        `Error de tipo de dato: Error al iniciar sesión ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
-        name: "Error de sesión",
+        name: "Error de tipo de dato",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "Error al iniciar sesion",
+        message: "FError al iniciar sesión",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     } else {
@@ -48,8 +55,11 @@ async function loginUser(req, res, next) {
         result.length === 0 ||
         !isValidPassword(result[0].password, password)
       ) {
+        req.logger.error(
+          `Error de base de datos: Error al obtener el usuario ${new Date().toLocaleString()}`
+        );
         CustomError.createError({
-          name: "Error de sesión",
+          name: "Error de base de datos",
           cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
           message: "Error al obtener el usuario",
           code: EErrors.DATABASE_ERROR,
@@ -61,7 +71,10 @@ async function loginUser(req, res, next) {
           password,
           role: result[0].role,
         });
-        res.json({ message: "Login correcto", token: myToken });
+        req.logger.info(
+          `Login realizado con éxito ${new Date().toLocaleString()}`
+        );
+        res.json({ message: "Login realizado con éxito", token: myToken });
       }
     }
   } catch (error) {
@@ -72,8 +85,11 @@ async function loginUser(req, res, next) {
 //Ruta que se ejecuta cuando falla el registro
 async function failLogin(req, res, next) {
   const result = [];
+  req.logger.error(
+    `Error de base de datos: Error al iniciar sesion ${new Date().toLocaleString()}`
+  );
   CustomError.createError({
-    name: "Error de sesión",
+    name: "Error de base de datos",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
     message: "Error al iniciar sesion",
     code: EErrors.DATABASE_ERROR,
@@ -87,18 +103,24 @@ async function forgotPassword(req, res) {
   try {
     if (!username || !newPassword) {
       const result = [username, newPassword];
+      req.logger.error(
+        `Error de tipo de dato: Error al actualizar contraseña ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
-        name: "Error de sesión",
+        name: "Error de tipo de dato",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "Error al iniciar sesion",
+        message: "Error al actualizar contraseña",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     }
     const result = await usersService.getOneUser(username);
 
     if (result.length === 0) {
+      req.logger.error(
+        `Error de base de datos: Error al obtener el usuario ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
-        name: "Error de sesión",
+        name: "Error de base de datos",
         cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
         message: "Error al obtener el usuario",
         code: EErrors.DATABASE_ERROR,
@@ -107,6 +129,9 @@ async function forgotPassword(req, res) {
       const updatePassword = await usersService.updateUserPassword(
         result[0]._id,
         createHash(newPassword)
+      );
+      req.logger.info(
+        `Contrseña actualizada con éxito ${new Date().toLocaleString()}`
       );
       res.status(200).json({
         respuesta: "Contrseña actualizada con éxito",
