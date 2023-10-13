@@ -9,6 +9,14 @@ const customLevelOptions = {
     http: 4,
     debug: 5,
   },
+  colors: {
+    fatal: "red",
+    error: "orange",
+    warn: "yellow",
+    info: "green",
+    http: "blue",
+    debug: "purple",
+  },
 };
 
 const devLogger = winston.createLogger({
@@ -19,6 +27,11 @@ const devLogger = winston.createLogger({
       level: "debug",
     }),
   ],
+
+  format: winston.format.combine(
+    winston.format.colorize({ all: true }),
+    winston.format.simple()
+  ),
 });
 
 const prodLogger = winston.createLogger({
@@ -32,19 +45,16 @@ const prodLogger = winston.createLogger({
       level: "error",
     }),
   ],
+
+  format: winston.format.combine(
+    winston.format.colorize({ all: true }),
+    winston.format.simple()
+  ),
 });
 
 export const addLogger = (req, res, next) => {
   req.logger =
     process.env.ENVIRONMENT === "production" ? devLogger : prodLogger;
-  const { body } = req;
-  let bodyData = { ...body };
-
-  if (req.method === "POST" || req.method === "PUT") {
-    bodyData = JSON.stringify(bodyData);
-  } else {
-    bodyData = "";
-  }
 
   req.logger.http(
     `ruta:${req.method} ${
