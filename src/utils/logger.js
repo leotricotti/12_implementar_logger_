@@ -44,10 +44,7 @@ const prodLogger = winston.createLogger({
     new winston.transports.Console({
       level: "debug",
 
-      format: winston.format.combine(
-        winston.format.colorize({ all: true }),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.colorize({ all: true })),
     }),
   ],
 });

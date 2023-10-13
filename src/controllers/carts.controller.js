@@ -6,7 +6,7 @@ import { generateCartErrorInfo } from "../services/errors/info.js";
 //Método asyncrono para obtener todos los carritos
 async function getAll(req, res, next) {
   try {
-    const carts = []; //await cartService.getAllCarts();
+    const carts = await cartService.getAllCarts();
     if (carts.length === 0) {
       req.logger.error(
         `Error al cargar los carritos ${new Date().toLocaleString()}`
@@ -18,8 +18,8 @@ async function getAll(req, res, next) {
         code: EErrors.DATABASE_ERROR,
       });
     } else {
-      res.json({ message: "Carritos cargados con exito", data: carts });
       req.logger.info("Carritos cargados con exito");
+      res.json({ message: "Carritos cargados con exito", data: carts });
     }
   } catch (err) {
     next(err);
@@ -27,10 +27,13 @@ async function getAll(req, res, next) {
 }
 
 //Método asyncrono para obtener un carrito
-async function getOne(req, res, next) {
+async function getOne(req, res) {
   const { cid } = req.params;
   try {
-    if (!cid) {
+    if (cid) {
+      req.logger.error(
+        `Error al cargar los carritos ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateCartErrorInfo(cid, EErrors.INVALID_TYPES_ERROR),
@@ -38,7 +41,6 @@ async function getOne(req, res, next) {
         code: EErrors.INVALID_TYPES_ERROR,
       });
     }
-
     const cart = await cartService.getOneCart(cid);
     if (cart.length === 0) {
       CustomError.createError({
@@ -48,10 +50,10 @@ async function getOne(req, res, next) {
         code: EErrors.DATABASE_ERROR,
       });
     } else {
-      res.json(cart);
+      res.json({ message: "Carrito obtenido con éxito", data: cart });
     }
   } catch (err) {
-    next(err);
+    console.log(err);
   }
 }
 
