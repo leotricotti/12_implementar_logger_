@@ -8,6 +8,9 @@ async function userCart(req, res) {
   const { cartId, email } = req.body;
   try {
     if (!cartId || !email) {
+      req.logger.error(
+        `Error de tipo de dato: Error al cargar el carrito ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateUserCartErrorInfo(carts, EErrors.INVALID_TYPES_ERROR),
@@ -17,6 +20,9 @@ async function userCart(req, res) {
     }
     const user = await usersService.getOneUser(email);
     if (user.length === 0) {
+      req.logger.error(
+        `Error de base de datos: Error al cargar el carrito ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de base de datos",
         cause: generateUserCartErrorInfo(user, EErrors.DATABASE_ERROR),
@@ -29,8 +35,25 @@ async function userCart(req, res) {
     if (!cartExist) {
       user[0].carts.push(cartId);
       const respuesta = await usersService.updateUserCart(userId, user[0]);
+      if (!respuesta) {
+        req.logger.error(
+          `Error de base de datos: Error al actualizar el carrito ${new Date().toLocaleString()}`
+        );
+        CustomError.createError({
+          name: "Error de base de datos",
+          cause: generateCartErrorInfo(newCart, EErrors.DATABASE_ERROR),
+          message: "Error al actualizar el carrito",
+          code: EErrors.DATABASE_ERROR,
+        });
+      }
     } else {
-      return false;
+      req.logger.info(
+        `Carrito actualizado con éxito ${new Date().toLocaleString()}`
+      );
+      res.json({
+        message: "Carrito actualizado con éxito",
+        data: respuesta,
+      });
     }
   } catch (err) {
     next(err);
