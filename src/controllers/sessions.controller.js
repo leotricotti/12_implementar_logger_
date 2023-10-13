@@ -43,7 +43,6 @@ async function loginUser(req, res, next) {
       });
     } else {
       const result = await usersService.getOneUser(username);
-      console.log(result);
 
       if (
         result.length === 0 ||

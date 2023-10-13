@@ -188,7 +188,6 @@ async function deleteProduct(req, res, next) {
     cart.products.splice(productExistsInCarts, 1);
 
     const result = await cartService.updateOneCart(cid, cart);
-    console.log(result);
     if (!result) {
       CustomError.createError({
         name: "Error de base de datos",
