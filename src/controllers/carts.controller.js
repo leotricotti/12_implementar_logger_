@@ -17,6 +17,7 @@ async function getAll(req, res, next) {
       req.logger.error("Error al cargar los carritos");
     } else {
       res.json({ message: "Carritos cargados con exito", data: carts });
+      req.logger.info("Carritos cargados con exito");
     }
   } catch (err) {
     next(err);

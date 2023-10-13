@@ -1,4 +1,9 @@
 import winston from "winston";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const ENVIRONMENT = process.env.ENVIRONMENT;
 
 const customLevelOptions = {
   levels: {
@@ -54,12 +59,6 @@ const prodLogger = winston.createLogger({
 
 export const addLogger = (req, res, next) => {
   req.logger =
-    process.env.ENVIRONMENT === "production" ? devLogger : prodLogger;
-
-  req.logger.http(
-    `ruta:${req.method} ${
-      req.url
-    } - ${new Date().toLocaleTimeString()} - data:${bodyData}`
-  );
+    process.env.ENVIRONMENT === "production" ? prodLogger : devLogger;
   next();
 };
