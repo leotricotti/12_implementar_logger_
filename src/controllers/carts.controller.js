@@ -8,7 +8,9 @@ async function getAll(req, res, next) {
   try {
     const carts = []; //await cartService.getAllCarts();
     if (carts.length === 0) {
-      req.logger.error("Error al cargar los carritos");
+      req.logger.error(
+        `Error al cargar los carritos ${new Date().toLocaleString()}`
+      );
       CustomError.createError({
         name: "Error de base de datos",
         cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),

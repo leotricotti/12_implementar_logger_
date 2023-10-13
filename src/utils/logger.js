@@ -27,16 +27,12 @@ const devLogger = winston.createLogger({
     new winston.transports.Console({
       level: "info",
 
-      format: winston.format.combine(
-        winston.format.colorize({ all: true }),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.colorize({ all: true })),
     }),
 
     new winston.transports.File({
       filename: "./erros.log",
       level: "error",
-      format: winston.format.simple(),
     }),
   ],
 });
