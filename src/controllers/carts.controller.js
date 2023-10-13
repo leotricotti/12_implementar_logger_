@@ -4,9 +4,9 @@ import EErrors from "../services/errors/enum.js";
 import { generateCartErrorInfo } from "../services/errors/info.js";
 
 //Método asyncrono para obtener todos los carritos
-async function getAll(req, res, next) {
+function getAll(req, res, next) {
   try {
-    const carts = await cartService.getAllCarts();
+    const carts = []; //await cartService.getAllCarts();
     if (carts.length === 0) {
       req.logger.error(
         `Error al cargar los carritos ${new Date().toLocaleString()}`
@@ -27,7 +27,7 @@ async function getAll(req, res, next) {
 }
 
 //Método asyncrono para obtener un carrito
-async function getOne(req, res) {
+async function getOne(req, res, next) {
   const { cid } = req.params;
   try {
     if (cid) {
@@ -53,7 +53,7 @@ async function getOne(req, res) {
       res.json({ message: "Carrito obtenido con éxito", data: cart });
     }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 }
 

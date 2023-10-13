@@ -28,5 +28,5 @@ export default (err, req, res, next) => {
       });
       break;
   }
-  next(err);
+  next();
 };
