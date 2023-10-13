@@ -6,15 +6,15 @@ import { generateCartErrorInfo } from "../services/errors/info.js";
 //Método asyncrono para obtener todos los carritos
 async function getAll(req, res, next) {
   try {
-    const carts = await cartService.getAllCarts();
+    const carts = []; //await cartService.getAllCarts();
     if (carts.length === 0) {
+      req.logger.error("Error al cargar los carritos");
       CustomError.createError({
         name: "Error de base de datos",
         cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
         message: "Error al cargar los carritos",
         code: EErrors.DATABASE_ERROR,
       });
-      req.logger.error("Error al cargar los carritos");
     } else {
       res.json({ message: "Carritos cargados con exito", data: carts });
       req.logger.info("Carritos cargados con exito");
