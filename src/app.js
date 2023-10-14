@@ -9,7 +9,6 @@ import SessionsRouter from "./routes/sessions.routes.js";
 import ProductsRouter from "./routes/products.routes.js";
 import RealTimeProducts from "./routes/realTimeProducts.routes.js";
 import MockingProducts from "./routes/mockingProducts.routes.js";
-import TestLogger from "./routes/testLogger.routes.js";
 import {
   initializePassport,
   githubStrategy,
@@ -72,8 +71,6 @@ app.use(
   authorization("user"),
   MockingProducts
 );
-app.use("/api/testLogger", TestLogger);
-
 app.use(errorHandler);
 
 // Server

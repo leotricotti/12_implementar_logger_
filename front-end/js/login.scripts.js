@@ -89,7 +89,6 @@ async function postLogin(username, password) {
       });
     }
 
-    showSpinner();
     createCart();
     getUser();
 
