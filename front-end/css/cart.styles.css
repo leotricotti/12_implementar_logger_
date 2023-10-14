@@ -227,3 +227,10 @@ a {
 #chat1 .form-outline .form-control ~ .form-label {
   color: #bfbfbf;
 }
+
+/* Footer */
+
+.footer {
+  max-width: 800px;
+  margin: auto;
+}

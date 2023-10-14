@@ -27,9 +27,24 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/cart.styles.css" />
   </head>
-  <body>
+  <body class="overflow-hidden">
     <main>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed">
+      <div
+        class="position-absolute top-0 start-0 w-100 h-100 bg-white z-3 d-none"
+        id="spinner"
+      >
+        <div
+          class="spinner-border text-secondary position-absolute top-50 start-50"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <nav
+        class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed d-none"
+        id="navbar-top"
+      >
         <div class="container-fluid">
           <img
             src="../img/logo.jpg"
@@ -93,8 +108,9 @@
           </div>
         </div>
       </nav>
+
       <div class="container h-100 py-5 mb-1 pb-2" id="cart-nav-container"></div>
-      <div id="cart-container"></div>
+      <div id="cart-container" style="margin-bottom: 200px"></div>
       <section class="chat-section">
         <img
           src="../img/logo.jpg"
@@ -160,6 +176,39 @@
           </div>
         </div>
       </section>
+
+      <footer
+        class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"
+      >
+        <div class="col-md-4 d-flex align-items-center">
+          <img
+            src="../img/logo.jpg"
+            alt="E-Store logo"
+            class="rounded-circle me-2"
+            width="25"
+            height="25"
+          />
+          <a class="navbar-brand" href="#"> E-Store </a>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+          <li class="ms-3">
+            <a class="text-body-secondary" href="#"
+              ><i class="fa-brands fa-x-twitter"></i>
+            </a>
+          </li>
+          <li class="ms-3">
+            <a class="text-body-secondary" href="#"
+              ><i class="fa-brands fa-instagram"></i>
+            </a>
+          </li>
+          <li class="ms-3">
+            <a class="text-body-secondary" href="#">
+              <i class="fa-brands fa-facebook"></i>
+            </a>
+          </li>
+        </ul>
+      </footer>
     </main>
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -173,10 +222,14 @@
     <script src="../js/chat.scripts.js"></script>
     <!--Welcome user-->
     <script src="../js/welcomeUser.scripts.js"></script>
+    <!--Spinner-->
+    <script src="../js/spinner.scripts.js"></script>
     <!-- Logout -->
     <script src="../js/logout.scripts.js"></script>
     <!-- Cart Badge -->
     <script src="../js/cartBadge.scripts.js"></script>
+    <!--Spinner-->
+    <script src="../js/spinner.scripts.js"></script>
     <!-- Custom JS -->
     <script src="../js/cart.scripts.js"></script>
   </body>
