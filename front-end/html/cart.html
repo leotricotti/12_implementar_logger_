@@ -76,21 +76,6 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
-                    <a class="dropdown-item" href="#">
-                      <i class="fas fa-sliders-h fa-fw"></i>
-                      Cuenta
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">
-                      <i class="fas fa-cog fa-fw"></i>
-                      Configuración
-                    </a>
-                  </li>
-                  <li>
-                    <hr class="dropdown-divider" />
-                  </li>
-                  <li>
                     <button class="btn dropdown-item" onclick="logout()">
                       <i class="fas fa-sign-out-alt fa-fw"></i>
                       Cerrar sesión
@@ -110,7 +95,7 @@
       </nav>
 
       <div class="container h-100 py-5 mb-1 pb-2" id="cart-nav-container"></div>
-      <div id="cart-container" style="margin-bottom: 200px"></div>
+      <div id="cart-container" style="margin-bottom: 100px"></div>
       <section class="chat-section">
         <img
           src="../img/logo.jpg"
@@ -177,37 +162,50 @@
         </div>
       </section>
 
-      <footer
-        class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"
-      >
-        <div class="col-md-4 d-flex align-items-center">
-          <img
-            src="../img/logo.jpg"
-            alt="E-Store logo"
-            class="rounded-circle me-2"
-            width="25"
-            height="25"
-          />
-          <a class="navbar-brand" href="#"> E-Store </a>
-        </div>
+      <footer class="border-top">
+        <div
+          class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4"
+          style="max-width: 1000px; margin: 0 auto"
+        >
+          <div class="col-md-4 d-flex align-items-center">
+            <img
+              src="../img/logo.jpg"
+              alt="E-Store logo"
+              class="rounded-circle me-2"
+              width="25"
+              height="25"
+            />
+            <a class="navbar-brand" href="#"> E-Store </a>
+          </div>
 
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-          <li class="ms-3">
-            <a class="text-body-secondary" href="#"
-              ><i class="fa-brands fa-x-twitter"></i>
-            </a>
-          </li>
-          <li class="ms-3">
-            <a class="text-body-secondary" href="#"
-              ><i class="fa-brands fa-instagram"></i>
-            </a>
-          </li>
-          <li class="ms-3">
-            <a class="text-body-secondary" href="#">
-              <i class="fa-brands fa-facebook"></i>
-            </a>
-          </li>
-        </ul>
+          <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+              <a
+                class="text-body-secondary"
+                href="https://twitter.com/"
+                target="_blank"
+                ><i class="fa-brands fa-x-twitter"></i>
+              </a>
+            </li>
+            <li class="ms-3">
+              <a
+                class="text-body-secondary"
+                href="https://www.instagram.com/"
+                target="_blank"
+                ><i class="fa-brands fa-instagram"></i>
+              </a>
+            </li>
+            <li class="ms-3">
+              <a
+                class="text-body-secondary"
+                href="https://www.facebook.com"
+                target="_blank"
+              >
+                <i class="fa-brands fa-facebook"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
       </footer>
     </main>
     <!-- Sweet Alert -->
