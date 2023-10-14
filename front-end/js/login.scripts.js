@@ -76,7 +76,7 @@ async function postLogin(username, password) {
     const result = await response.json();
     localStorage.setItem("token", result.token);
 
-    if (result.message === "Login correcto") {
+    if (result.message !== "Login correcto") {
     } else {
       Swal.fire({
         icon: "error",
