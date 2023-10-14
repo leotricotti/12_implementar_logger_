@@ -111,11 +111,6 @@ a {
   cursor: pointer;
 }
 
-.chat-section {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
 .chat-img {
   position: fixed;
   bottom: 20px;
