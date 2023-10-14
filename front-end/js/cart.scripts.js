@@ -174,7 +174,7 @@ const deleteProduct = async (idProduct) => {
     if (result.isConfirmed) {
       Swal.fire({
         icon: "success",
-        title: "Producto con éxito",
+        title: "Producto eliminado con éxito",
         showConfirmButton: true,
         showClass: {
           popup: "animate__animated animate__zoomIn",

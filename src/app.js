@@ -9,6 +9,7 @@ import SessionsRouter from "./routes/sessions.routes.js";
 import ProductsRouter from "./routes/products.routes.js";
 import RealTimeProducts from "./routes/realTimeProducts.routes.js";
 import MockingProducts from "./routes/mockingProducts.routes.js";
+import TestLogger from "./routes/testLogger.routes.js";
 import {
   initializePassport,
   githubStrategy,
@@ -56,16 +57,22 @@ enviroment();
 
 // Routes
 app.use("/api/userCart", authToken, authorization("user"), UserCart);
-app.use("/api/carts", CartsRouter);
+app.use("/api/carts", authToken, authorization("user"), CartsRouter);
 app.use("/api/sessions", SessionsRouter);
-app.use("/api/products", ProductsRouter);
-app.use("/api/realTimeProducts", RealTimeProducts);
+app.use("/api/products", authToken, authorization("user"), ProductsRouter);
+app.use(
+  "/api/realTimeProducts",
+  authToken,
+  authorization("admin"),
+  RealTimeProducts
+);
 app.use(
   "/api/mockingProducts",
   authToken,
   authorization("user"),
   MockingProducts
 );
+app.use("/api/testLogger", TestLogger);
 
 app.use(errorHandler);
 

@@ -28,7 +28,7 @@ const cartBadge = async () => {
       }
       const cart = await response.json();
 
-      const productsQuantity = cart.products.reduce(
+      const productsQuantity = cart.data.products.reduce(
         (acc, product) => acc + product.quantity,
         0
       );

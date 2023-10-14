@@ -131,7 +131,7 @@ const getCartId = async () => {
     });
     const carts = await response.json();
 
-    const lastCart = carts.carts[carts.carts.length - 1];
+    const lastCart = carts.data[carts.data.length - 1];
     saveCartId(lastCart._id);
   } catch (error) {
     console.log(error);

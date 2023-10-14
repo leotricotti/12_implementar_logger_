@@ -4,7 +4,7 @@ import EErrors from "../services/errors/enum.js";
 import { generateUserCartErrorInfo } from "../services/errors/info.js";
 
 //Ruta que agrega el id del carrito al usuario
-async function userCart(req, res) {
+async function userCart(req, res, next) {
   const { cartId, email } = req.body;
   try {
     if (!cartId || !email) {
@@ -34,8 +34,8 @@ async function userCart(req, res) {
     const cartExist = user[0].carts.find((cart) => cart == cartId);
     if (!cartExist) {
       user[0].carts.push(cartId);
-      const respuesta = await usersService.updateUserCart(userId, user[0]);
-      if (!respuesta) {
+      const response = await usersService.updateUserCart(userId, user[0]);
+      if (!response) {
         req.logger.error(
           `Error de base de datos: Error al actualizar el carrito ${new Date().toLocaleString()}`
         );
@@ -52,7 +52,6 @@ async function userCart(req, res) {
       );
       res.json({
         message: "Carrito actualizado con éxito",
-        data: respuesta,
       });
     }
   } catch (err) {
