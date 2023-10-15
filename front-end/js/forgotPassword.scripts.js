@@ -1,5 +1,5 @@
-//Funcion que envia los datos al backend
-async function postForgot(username, newPassword) {
+// Función que envía los datos al backend
+const postForgot = async (username, newPassword) => {
   const response = await fetch("http://localhost:8080/api/sessions/forgot", {
     method: "POST",
     headers: {
@@ -11,13 +11,13 @@ async function postForgot(username, newPassword) {
 
   const result = await response.json();
   return result;
-}
+};
 
-//Capturamos el formulario de login
+// Capturamos el formulario de login
 const loginForm = document.getElementById("login-form");
 
-//Funcion que captura los datos y actualiza la contraseña
-loginForm.addEventListener("submit", function (event) {
+// Función que captura los datos y actualiza la contraseña
+loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
@@ -64,24 +64,22 @@ loginForm.addEventListener("submit", function (event) {
   }
 });
 
-// Codigo que captura el boton de mostrar/ocultar contraseña
+// Constantes que capturan los elementos del DOM
 const newEyeOpen = document.getElementById("new-eye-open");
 const newPassword = document.getElementById("new-password");
 const newEyeClose = document.getElementById("new-eye-close");
 const newEyeContainer = document.getElementById("new-eye-container");
 
-// Codigo que agrega un evento de click al boton de mostrar/ocultar contraseña
+// Función que agrega un evento de click al botón de mostrar/ocultar contraseña
 newEyeContainer.addEventListener("click", () => {
   newEyeOpen.classList.toggle("show-password");
   newEyeClose.classList.toggle("show-password");
   showNewPassword();
 });
 
-// Funcion que muestra/oculta la contraseña
+// Función que muestra/oculta la contraseña
 const showNewPassword = () => {
-  if (newEyeOpen.classList.contains("show-password")) {
-    newPassword.type = "text";
-  } else {
-    newPassword.type = "password";
-  }
+  newPassword.type = newEyeOpen.classList.contains("show-password")
+    ? "text"
+    : "password";
 };

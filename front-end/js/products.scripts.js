@@ -24,89 +24,96 @@ const productsHandler = async (handler, index) => {
 
   const productsContainer = document.getElementById("products-container");
   productsContainer.innerHTML = "";
-  productsData.forEach((product) => {
-    productsContainer.innerHTML += `
-    <div class="col-md-12 col-xl-10 margin">
-    <div class="card shadow-0 border rounded-3">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-            ${product.thumbnail
-              .map((img) => {
-                return `
-                <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                  <img src="${img.img1}" class="w-100" />
-                  <a href="#!">
-                    <div class="hover-overlay">
-                      <div
-                        class="mask"
-                        style="background-color: rgba(253, 253, 253, 0.15)"
-                      ></div>
-                    </div>
-                  </a>
-                </div>
-              `;
-              })
-              .join("")}
-          </div>
-          <div class="col-md-6 col-lg-6 col-xl-6">
-            <h5>${product.title}</h5>
-            <div class="d-flex flex-row">
-              <div class="text-danger mb-1 me-2">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
+  const productsHtml = productsData
+    .map((product) => {
+      const thumbnailHtml = product.thumbnail
+        .map((img) => {
+          return `
+          <div class="bg-image hover-zoom ripple rounded ripple-surface">
+            <img src="${img.img1}" class="w-100" />
+            <a href="#!">
+              <div class="hover-overlay">
+                <div
+                  class="mask"
+                  style="background-color: rgba(253, 253, 253, 0.15)"
+                ></div>
               </div>
-              <span> 310 </span>
-            </div>
-            <div class="mt-1 mb-0 text-muted small">
-              <span>
-                <b> Categoria: ${product.category} </b>
-              </span>
-            </div>
-            <div class="mb-2 text-muted small">
-              <span> Llega el martes </span>
-              <span class="text-primary"> • </span>
-              <span> Beneficio Tienda Puntos </span>
-              <span class="text-primary"> • </span>
-              <span>
-                Stock disponible
-                <br />
-              </span>
-            </div>
-            <p class="text-truncate mb-4 mb-md-0">${product.description}</p>
+            </a>
           </div>
-          <div
-            class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start"
-          >
-            <div class="d-flex flex-row align-items-center mb-1">
-              <h4 class="mb-1 me-1">$ ${calculateDiscountedPrice(
-                product.price
-              )}</h4>
-              <span class="text-danger">
-                <s> $ ${product.price} </s>
-              </span>
-            </div>
-            <h6 class="text-success">Envio gratis</h6>
-            <div class="d-flex flex-column mt-4">
-              <button class="btn btn-primary btn-sm" type="button">
-                Detalles
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm mt-2"
-                type="button"
-                onclick="addProduct('${product._id}')"
+        `;
+        })
+        .join("");
+
+      const discountedPrice = calculateDiscountedPrice(product.price);
+
+      return `
+      <div class="col-md-12 col-xl-10 margin">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                ${thumbnailHtml}
+              </div>
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <h5>${product.title}</h5>
+                <div class="d-flex flex-row">
+                  <div class="text-danger mb-1 me-2">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                  </div>
+                  <span> 310 </span>
+                </div>
+                <div class="mt-1 mb-0 text-muted small">
+                  <span>
+                    <b> Categoria: ${product.category} </b>
+                  </span>
+                </div>
+                <div class="mb-2 text-muted small">
+                  <span> Llega el martes </span>
+                  <span class="text-primary"> • </span>
+                  <span> Beneficio Tienda Puntos </span>
+                  <span class="text-primary"> • </span>
+                  <span>
+                    Stock disponible
+                    <br />
+                  </span>
+                </div>
+                <p class="text-truncate mb-4 mb-md-0">${product.description}</p>
+              </div>
+              <div
+                class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start"
               >
-                Agregar al carrito
-              </button>
+                <div class="d-flex flex-row align-items-center mb-1">
+                  <h4 class="mb-1 me-1">$ ${discountedPrice}</h4>
+                  <span class="text-danger">
+                    <s> $ ${product.price} </s>
+                  </span>
+                </div>
+                <h6 class="text-success">Envio gratis</h6>
+                <div class="d-flex flex-column mt-4">
+                  <button class="btn btn-primary btn-sm" type="button">
+                    Detalles
+                  </button>
+                  <button
+                    class="btn btn-outline-primary btn-sm mt-2"
+                    type="button"
+                    onclick="addProduct('${product._id}')"
+                  >
+                    Agregar al carrito
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>`;
-  });
+    `;
+    })
+    .join("");
+
+  productsContainer.innerHTML = productsHtml;
 };
 
 productsHandler();

@@ -1,4 +1,4 @@
-//Crea un carrito vacío en la base de datos
+// Crea un carrito vacío en la base de datos
 const createCart = async () => {
   try {
     if (localStorage.getItem("cartId")) {
@@ -20,7 +20,7 @@ const createCart = async () => {
   }
 };
 
-// Funcion que captura la información del usuario y la envía almacena en el local storage
+// Función que captura la información del usuario y la almacena en el local storage
 const getUser = async () => {
   try {
     const response = await fetch("http://localhost:8080/api/sessions/current", {
@@ -38,11 +38,8 @@ const getUser = async () => {
       localStorage.setItem("user", JSON.stringify(result.data));
     }
 
-    if (role === "admin") {
-      window.location.href = "http://127.0.0.1:5500/html/realTimeProducts.html";
-    } else {
-      window.location.href = "http://127.0.0.1:5500/html/products.html";
-    }
+    const url = role === "admin" ? "realTimeProducts.html" : "products.html";
+    window.location.href = `http://127.0.0.1:5500/html/${url}`;
 
     return result;
   } catch (error) {
@@ -50,12 +47,12 @@ const getUser = async () => {
   }
 };
 
-//Capturar datos del formulario de login y los envía al servidor
+// Capturar datos del formulario de login y los envía al servidor
 const loginForm = document.getElementById("login-form");
 const loginButton = document.getElementById("login-button");
 
 // Agregar un evento submit al formulario de login
-loginForm.addEventListener("submit", function (event) {
+loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
@@ -63,7 +60,7 @@ loginForm.addEventListener("submit", function (event) {
 });
 
 // Función para enviar los datos de inicio de sesión al servidor
-async function postLogin(username, password) {
+const postLogin = async (username, password) => {
   try {
     const response = await fetch("http://localhost:8080/api/sessions/login", {
       method: "POST",
@@ -77,7 +74,6 @@ async function postLogin(username, password) {
     localStorage.setItem("token", result.token);
 
     if (result.message !== "Login correcto") {
-    } else {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -87,16 +83,16 @@ async function postLogin(username, password) {
           popup: "animate__animated animate__zoomIn",
         },
       });
+    } else {
+      createCart();
+      getUser();
     }
-
-    createCart();
-    getUser();
 
     return result;
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 // Login con GitHub
 const githubLogin = () => {

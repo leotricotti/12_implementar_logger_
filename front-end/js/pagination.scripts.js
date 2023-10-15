@@ -1,8 +1,10 @@
+// Función que actualiza los botones de navegación de la paginación
 const updatePagination = () => {
   const currentPage = parseInt(localStorage.getItem("currentPage"));
   const previousButton = document.getElementById("previous-page");
   const nextButton = document.getElementById("next-page");
 
+  // Deshabilita el botón "anterior" si el usuario está en la primera página
   if (currentPage === 1) {
     previousButton.classList.add("disabled");
     previousButton.disabled = true;
@@ -11,6 +13,7 @@ const updatePagination = () => {
     previousButton.disabled = false;
   }
 
+  // Deshabilita el botón "siguiente" si el usuario está en la última página
   if (currentPage === 4) {
     nextButton.classList.add("disabled");
     nextButton.disabled = true;
@@ -20,6 +23,7 @@ const updatePagination = () => {
   }
 };
 
+// Función que maneja el evento de clic en el botón "anterior"
 const previousPage = () => {
   let currentPage = localStorage.getItem("currentPage");
   currentPage = parseInt(currentPage);
@@ -33,6 +37,7 @@ const previousPage = () => {
   activePage();
 };
 
+// Función que maneja el evento de clic en el botón "siguiente"
 const nextPage = () => {
   let currentPage = localStorage.getItem("currentPage");
   currentPage = parseInt(currentPage);
@@ -46,10 +51,12 @@ const nextPage = () => {
   activePage();
 };
 
+// Evento que se dispara cuando se carga la página
 document.addEventListener("DOMContentLoaded", () => {
   updatePagination();
 });
 
+// Función que establece la página activa en la paginación
 const setActivePage = (page) => {
   const elements = document.querySelectorAll(`li[data-page]`);
   elements.forEach((element) => {
@@ -64,11 +71,13 @@ const setActivePage = (page) => {
   updatePagination();
 };
 
+// Función que establece la página activa en la paginación al cargar la página
 const activePage = () => {
   const currentPage = localStorage.getItem("currentPage");
   setActivePage(currentPage);
 };
 
+// Evento que se dispara cuando se carga la página
 document.addEventListener("DOMContentLoaded", () => {
   const currentPage = localStorage.getItem("currentPage");
   if (!currentPage) {
@@ -78,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const elements = document.querySelectorAll(`li[data-page]`);
   elements.forEach((element) => {
+    // Agrega un evento de clic a cada elemento de la paginación
     element.addEventListener("click", () => {
       setActivePage(element.dataset.page);
     });

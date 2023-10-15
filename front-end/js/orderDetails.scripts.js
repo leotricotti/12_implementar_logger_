@@ -1,9 +1,11 @@
-// Funcion que crea un resumen de la compra
-async function orderDetails() {
+// Función que crea un resumen de la compra
+const orderDetails = async () => {
   const productsData = [];
   const productsWithOutStock = [];
   const orderDetails = document.getElementById("order-container");
   const order = await JSON.parse(localStorage.getItem("order"));
+
+  const { purchase_datetime, code, amount } = order.data;
 
   productsData.push(order.products);
   productsWithOutStock.push(order.remainingProducts);
@@ -12,26 +14,28 @@ async function orderDetails() {
     <div class="row">
       <div class="col mb-3">
         <p class="small text-muted mb-1">Fecha</p>
-        <p>${order.data.purchase_datetime}</p>
+        <p>${purchase_datetime}</p>
       </div>
       <div class="col mb-3">
         <p class="small text-muted mb-1">Orden N°</p>
-        <p>${order.data.code}</p>
+        <p>${code}</p>
       </div>
     </div>
     <div class="mx-n5 px-5 py-4" style="background-color: #f2f2f2">
     ${productsData[0]
       .map((item) => {
+        const { title, price } = item.product;
+        const { quantity } = item;
         return `
       <div class="row">
           <div class="col-md-8 col-lg-6">
-            <p>${item.product.title}</p>
+            <p>${title}</p>
           </div>
           <div class="col-md-4 col-lg-3">
-          <p>${item.quantity}</p>
+          <p>${quantity}</p>
         </div>
           <div class="col-md-4 col-lg-3">
-            <p>$ ${(item.product.price * 0.85).toFixed(2)}</p>
+            <p>$ ${(price * 0.85).toFixed(2)}</p>
           </div>
         </div>
       `;
@@ -46,18 +50,20 @@ async function orderDetails() {
       <h5 class="mb-4">Productos sin stock</h5>
       ${productsWithOutStock[0]
         .map((item) => {
+          const { title, price } = item.product;
+          const { quantity } = item;
           return `
             <div class="row">
               <div class="col-md-8 col-lg-6">
-                <p>${item.product.title}</p>
+                <p>${title}</p>
               </div>
               <div class="col-md-4 col-lg-3">
-                <p>${item.quantity}</p>
+                <p>${quantity}</p>
               </div>
               <div class="col-md-4 col-lg-3">
-                <span class=' text-danger'> <s>$ ${(
-                  item.product.price * 0.85
-                ).toFixed(2)}</s></span>
+                <span class=' text-danger'> <s>$ ${(price * 0.85).toFixed(
+                  2
+                )}</s></span>
               </div>
             </div>
           `;
@@ -72,13 +78,13 @@ async function orderDetails() {
         <div class="row my-4">
         <div class="col-md-4 offset-md-8 col-lg-3 offset-lg-8 d-flex w-50">
           <p class="lead fw-bold mb-0 me-2">Total:</p>
-          <p class="lead fw-bold mb-0">$${order.data.amount}</p>
+          <p class="lead fw-bold mb-0">$${amount}</p>
         </div>
       </div>
       `;
 
   orderDetails.innerHTML = html;
-}
+};
 
 orderDetails();
 
