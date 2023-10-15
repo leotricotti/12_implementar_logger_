@@ -31,6 +31,15 @@ const initializePassport = () => {
             jwt_payload.user.username
           );
           if (!response) {
+            req.logger.error(
+              `Error de autenticación. Usuario inexistente ${new Date().toLocaleString()}`
+            );
+            CustomError.createError({
+              name: "Error de autenticación",
+              cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+              message: "Usuario inexistente",
+              code: EErrors.DATABASE_ERROR,
+            });
             return done(null, false, { message: "Usuario inexistente" });
           } else {
             return done(null, jwt_payload);
@@ -62,6 +71,15 @@ const initializePassport = () => {
         try {
           const user = await usersService.getOneUser(username);
           if (user.length > 0) {
+            req.logger.error(
+              `Error de autenticación. El usuario ya existe ${new Date().toLocaleString()}`
+            );
+            CustomError.createError({
+              name: "Error de autenticación",
+              cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+              message: "El usuario ya existe",
+              code: EErrors.DATABASE_ERROR,
+            });
             return done(null, false, {
               message: "Error al crear el usuario. El usuario ya existe",
             });
@@ -93,15 +111,6 @@ const initializePassport = () => {
     done(null, user);
   });
 };
-
-// // Configurar cookie extractor
-// const cookieExtractor = (req) => {
-//   let token = null;
-//   if (req && req.cookies) {
-//     token = req.cookies["jwt"];
-//   }
-//   return token;
-// };
 
 // Configurar passport para loguear usuarios con github
 const githubStrategy = () => {
