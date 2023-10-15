@@ -18,7 +18,9 @@ async function getAll(req, res, next) {
         code: EErrors.DATABASE_ERROR,
       });
     } else {
-      req.logger.info("Carritos cargados con exito");
+      req.logger.info(
+        `Carritos cargados con exito ${new Date().toLocaleString()}`
+      );
       res.json({ message: "Carritos cargados con exito", data: carts });
     }
   } catch (err) {

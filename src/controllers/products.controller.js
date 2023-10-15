@@ -25,7 +25,9 @@ async function getAll(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       } else {
-        req.logger.info("Productos filtrados con éxito");
+        req.logger.info(
+          `Productos filtrados con éxito ${new Date().toLocaleString()}`
+        );
         res.json({
           message: "Productos filtrados con éxito",
           products: filteredProducts.docs,
@@ -47,7 +49,9 @@ async function getAll(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       } else {
-        req.logger.info("Productos odenados con éxito");
+        req.logger.info(
+          `Productos odenados con éxito ${new Date().toLocaleString()}`
+        );
         res.json({
           message: "Productos ordenados con éxito",
           products: orderedProducts,
@@ -71,7 +75,9 @@ async function getAll(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       } else {
-        req.logger.info("Productos paginados con éxito");
+        req.logger.info(
+          `Productos paginados con éxito ${new Date().toLocaleString()}`
+        );
         res.json({
           message: "Productos paginados con éxito",
           products: paginatedProducts.docs,
