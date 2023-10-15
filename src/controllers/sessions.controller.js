@@ -6,46 +6,46 @@ import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateSessionErrorInfo } from "../services/errors/info.js";
 
-//Inicializa servicios
+// Initialize services
 dotenv.config();
 
-//Variables
+// Variables
 const JWT_SECRET = process.env.JWT_SECRET;
 
-//Ruta que realiza el registro
+// Route that performs user registration
 async function signupUser(req, res) {
-  req.logger.info(`Usuario creado con éxito ${new Date().toLocaleString()}`);
-  res.status(200).json({ message: "Usuario creado con éxito" });
+  req.logger.info(`User created successfully ${new Date().toLocaleString()}`);
+  res.status(200).json({ message: "User created successfully" });
 }
 
-//Ruta que se ejecuta cuando falla el registro
+// Route that executes when user registration fails
 async function failRegister(req, res, next) {
   const result = [];
   req.logger.error(
-    `Error de base de datos: Error al crear el usuario ${new Date().toLocaleString()}`
+    `Database error: Error creating user ${new Date().toLocaleString()}`
   );
   CustomError.createError({
-    name: "Error de base de datos",
+    name: "Database error",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-    message: "Error al crear el usuario",
+    message: "Error creating user",
     code: EErrors.DATABASE_ERROR,
   });
   next();
 }
 
-//Ruta que realiza el login
+// Route that performs user login
 async function loginUser(req, res, next) {
   const { username, password } = req.body;
   try {
     if (!username || !password) {
       const result = [username, password];
       req.logger.error(
-        `Error de tipo de dato: Error al iniciar sesión ${new Date().toLocaleString()}`
+        `Data type error: Error logging in ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Error de tipo de dato",
+        name: "Data type error",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "FError al iniciar sesión",
+        message: "Error logging in",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     } else {
@@ -56,12 +56,12 @@ async function loginUser(req, res, next) {
         !isValidPassword(result[0].password, password)
       ) {
         req.logger.error(
-          `Error de base de datos: Error al obtener el usuario ${new Date().toLocaleString()}`
+          `Database error: Error getting user ${new Date().toLocaleString()}`
         );
         CustomError.createError({
-          name: "Error de base de datos",
+          name: "Database error",
           cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-          message: "Error al obtener el usuario",
+          message: "Error getting user",
           code: EErrors.DATABASE_ERROR,
         });
       } else {
@@ -71,10 +71,8 @@ async function loginUser(req, res, next) {
           password,
           role: result[0].role,
         });
-        req.logger.info(
-          `Login realizado con éxito ${new Date().toLocaleString()}`
-        );
-        res.json({ message: "Login realizado con éxito", token: myToken });
+        req.logger.info(`Login successful ${new Date().toLocaleString()}`);
+        res.json({ message: "Login successful", token: myToken });
       }
     }
   } catch (error) {
@@ -82,34 +80,34 @@ async function loginUser(req, res, next) {
   }
 }
 
-//Ruta que se ejecuta cuando falla el registro
+// Route that executes when user login fails
 async function failLogin(req, res, next) {
   const result = [];
   req.logger.error(
-    `Error de base de datos: Error al iniciar sesion ${new Date().toLocaleString()}`
+    `Database error: Error logging in ${new Date().toLocaleString()}`
   );
   CustomError.createError({
-    name: "Error de base de datos",
+    name: "Database error",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-    message: "Error al iniciar sesion",
+    message: "Error logging in",
     code: EErrors.DATABASE_ERROR,
   });
   return next();
 }
 
-//Ruta que recupera la contraseña
+// Route that recovers the password
 async function forgotPassword(req, res) {
   const { username, newPassword } = req.body;
   try {
     if (!username || !newPassword) {
       const result = [username, newPassword];
       req.logger.error(
-        `Error de tipo de dato: Error al actualizar contraseña ${new Date().toLocaleString()}`
+        `Data type error: Error updating password ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Error de tipo de dato",
+        name: "Data type error",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "Error al actualizar contraseña",
+        message: "Error updating password",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     }
@@ -117,12 +115,12 @@ async function forgotPassword(req, res) {
 
     if (result.length === 0) {
       req.logger.error(
-        `Error de base de datos: Error al obtener el usuario ${new Date().toLocaleString()}`
+        `Database error: Error getting user ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Error de base de datos",
+        name: "Database error",
         cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-        message: "Error al obtener el usuario",
+        message: "Error getting user",
         code: EErrors.DATABASE_ERROR,
       });
     } else {
@@ -131,10 +129,10 @@ async function forgotPassword(req, res) {
         createHash(newPassword)
       );
       req.logger.info(
-        `Contrseña actualizada con éxito ${new Date().toLocaleString()}`
+        `Password updated successfully ${new Date().toLocaleString()}`
       );
       res.status(200).json({
-        respuesta: "Contrseña actualizada con éxito",
+        response: "Password updated successfully",
       });
     }
   } catch (error) {
@@ -142,13 +140,13 @@ async function forgotPassword(req, res) {
   }
 }
 
-//Ruta que devuelve el usuario logueado
+// Route that returns the logged in user
 async function currentUser(req, res) {
   const user = new UsersDto(req.user.user);
   res.status(200).json({ data: user });
 }
 
-//Callback de github
+// Github callback
 async function githubCallback(req, res) {
   req.user = req.user._json;
   res.redirect("/api/products?page=1");
