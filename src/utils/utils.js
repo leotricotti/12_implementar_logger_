@@ -28,35 +28,37 @@ const generateToken = (user) => {
 // Función que verifica si el token se ha enviado en la solicitud y si es válido.
 const authToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader)
+  if (!authHeader) {
     req.logger.error(
       `Error de autenticación. Error al autenticar el usuario ${new Date().toLocaleString()}`
     );
-  CustomError.createError({
-    name: "Error de autenticación",
-    cause: generateAuthErrorInfo(authHeader, EErrors.AUTH_ERROR),
-    message: "Error al autenticar el usuario",
-    code: EErrors.AUTH_ERROR,
-  });
-  res.status(401).json({ error: "Error de autenticacion" });
-
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err)
-      req.logger.error(
-        `Error de autenticación. Error al verificar token ${new Date().toLocaleString()}`
-      );
     CustomError.createError({
       name: "Error de autenticación",
-      cause: generateAuthErrorInfo(token, EErrors.AUTH_ERROR),
-      message: "Error al verificar token",
+      cause: generateAuthErrorInfo(authHeader, EErrors.AUTH_ERROR),
+      message: "Error al autenticar el usuario",
       code: EErrors.AUTH_ERROR,
     });
-    res.status(403).json({ error: "Token invalido" });
-
-    req.user = user;
-    next();
-  });
+    res.status(401).json({ error: "Error de autenticacion" });
+  } else {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) {
+        req.logger.error(
+          `Error de autenticación. Error al verificar token ${new Date().toLocaleString()}`
+        );
+        CustomError.createError({
+          name: "Error de autenticación",
+          cause: generateAuthErrorInfo(token, EErrors.AUTH_ERROR),
+          message: "Error al verificar token",
+          code: EErrors.AUTH_ERROR,
+        });
+        res.status(403).json({ error: "Token invalido" });
+      } else {
+        req.user = user;
+        next();
+      }
+    });
+  }
 };
 
 // Esta función para autenticar a los usuarios.
@@ -88,8 +90,9 @@ const passportCall = (strategy) => {
         return res.status(401).json({
           error: info.messages ? info.messages : info.toString(),
         });
+      } else {
+        req.user = user;
       }
-      req.user = user;
       next();
     })(req, res, next);
   };
