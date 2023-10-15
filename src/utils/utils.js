@@ -34,9 +34,9 @@ const authToken = (req, res, next) => {
     );
   CustomError.createError({
     name: "Error de autenticación",
-    cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+    cause: generateAuthErrorInfo(authHeader, EErrors.AUTH_ERROR),
     message: "Error al autenticar el usuario",
-    code: EErrors.DATABASE_ERROR,
+    code: EErrors.AUTH_ERROR,
   });
   res.status(401).json({ error: "Error de autenticacion" });
 
@@ -48,9 +48,9 @@ const authToken = (req, res, next) => {
       );
     CustomError.createError({
       name: "Error de autenticación",
-      cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+      cause: generateAuthErrorInfo(token, EErrors.AUTH_ERROR),
       message: "Error al verificar token",
-      code: EErrors.DATABASE_ERROR,
+      code: EErrors.AUTH_ERROR,
     });
     res.status(403).json({ error: "Token invalido" });
 
@@ -69,9 +69,9 @@ const passportCall = (strategy) => {
         );
         CustomError.createError({
           name: "Error de autenticación",
-          cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+          cause: generateAuthErrorInfo(error, EErrors.AUTH_ERROR),
           message: "Usuario no autorizado",
-          code: EErrors.DATABASE_ERROR,
+          code: EErrors.AUTH_ERROR,
         });
         return next(error);
       }
@@ -81,9 +81,9 @@ const passportCall = (strategy) => {
         );
         CustomError.createError({
           name: "Error de autenticación",
-          cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+          cause: generateAuthErrorInfo(user, EErrors.AUTH_ERROR),
           message: "Usuario no autenticado",
-          code: EErrors.DATABASE_ERROR,
+          code: EErrors.AUTH_ERROR,
         });
         return res.status(401).json({
           error: info.messages ? info.messages : info.toString(),
@@ -104,9 +104,9 @@ const authorization = (role) => {
       );
       CustomError.createError({
         name: "Error de autenticación",
-        cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+        cause: generateAuthErrorInfo(req.user, EErrors.AUTH_ERROR),
         message: "Usuario no autorizado",
-        code: EErrors.DATABASE_ERROR,
+        code: EErrors.AUTH_ERROR,
       });
       return res.status(401).send({ error: "Unauthorized" });
     }
@@ -117,9 +117,9 @@ const authorization = (role) => {
       );
       CustomError.createError({
         name: "Error de autenticación",
-        cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+        cause: generateAuthErrorInfo(role, EErrors.AUTH_ERROR),
         message: "Usuario sin permisos",
-        code: EErrors.DATABASE_ERROR,
+        code: EErrors.AUTH_ERROR,
       });
       return res.status(403).send({ error: "No permissions" });
     }

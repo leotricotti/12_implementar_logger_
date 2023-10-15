@@ -5,6 +5,9 @@ import * as dotenv from "dotenv";
 import GitHubStrategy from "passport-github2";
 import { usersService } from "../repository/index.js";
 import { createHash } from "../utils/utils.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateAuthErrorInfo } from "../services/errors/info.js";
 
 // Inicializar servicios
 dotenv.config();
@@ -36,9 +39,9 @@ const initializePassport = () => {
             );
             CustomError.createError({
               name: "Error de autenticación",
-              cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+              cause: generateAuthErrorInfo(carts, EErrors.AUTH_ERROR),
               message: "Usuario inexistente",
-              code: EErrors.DATABASE_ERROR,
+              code: EErrors.AUTH_ERROR,
             });
             return done(null, false, { message: "Usuario inexistente" });
           } else {
@@ -76,9 +79,9 @@ const initializePassport = () => {
             );
             CustomError.createError({
               name: "Error de autenticación",
-              cause: generateCartErrorInfo(carts, EErrors.DATABASE_ERROR),
+              cause: generateAuthErrorInfo(carts, EErrors.AUTH_ERROR),
               message: "El usuario ya existe",
-              code: EErrors.DATABASE_ERROR,
+              code: EErrors.AUTH_ERROR,
             });
             return done(null, false, {
               message: "Error al crear el usuario. El usuario ya existe",
