@@ -1,30 +1,24 @@
 // Funcion que calcula el precio con descuento
-const calculateDiscountedPrice = (price) => {
+const calculateDiscountedPrice = (price, discount = 0.85) => {
   const parsedPrice = parseFloat(price);
-  const discountedPrice = (parsedPrice * 0.85).toFixed(2);
+  const discountedPrice = (parsedPrice * discount).toFixed(2);
   return discountedPrice;
 };
 
 // Funcion que calcula el total de la compra
-const totalPurchase = (products) => {
+const totalPurchase = (products, discount = 0.85) => {
   let total = 0;
-  let totalWithDiscount = 0;
 
   products.forEach((product) => {
     total += product.product.price * product.quantity;
   });
 
-  totalWithDiscount = (total * 0.85).toFixed(2);
-  localStorage.setItem("totalPurchase", totalWithDiscount);
+  const totalWithDiscount = (total * discount).toFixed(2);
   return totalWithDiscount;
 };
 
 // Funcion que finaliza la compra
-async function finishPurchase(products) {
-  const cartId = localStorage.getItem("cartId");
-  const user = JSON.parse(localStorage.getItem("user"));
-  const totalPurchase = localStorage.getItem("totalPurchase");
-
+async function finishPurchase(products, cartId, user, token, totalPurchase) {
   try {
     const response = await fetch(
       `http://localhost:8080/api/carts/${cartId}/purchase`,
@@ -32,7 +26,7 @@ async function finishPurchase(products) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: user.username,
@@ -50,51 +44,29 @@ async function finishPurchase(products) {
   }
 }
 
-// Funcion que confirma o rechaza la compra
-const finishPurchaseAction = (products) => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¡No podrás revertir esto!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, finalizar compra",
-    cancelButtonText: "Cancelar",
+// Funcion que muestra un mensaje de confirmación
+const showConfirmationMessage = (title, text, icon) => {
+  return Swal.fire({
+    title,
+    text,
+    icon,
+    confirmButtonColor: "#3085d6",
+    confirmButtonText: "Aceptar",
     showClass: {
       popup: "animate__animated animate__zoomIn",
     },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "¡Compra finalizada con éxito!",
-        text: "En unos minutos recibirás un correo con los detalles de tu compra",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Aceptar",
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          finishPurchase(products);
-          setTimeout(function () {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            localStorage.setItem("currentPage", 1);
-            localStorage.removeItem("cartId");
-            localStorage.removeItem("totalPurchase");
-            window.location.href = "../html/orderDetails.html";
-          }, 2000);
-        }
-      });
-    }
   });
+};
+
+// Funcion que muestra un mensaje de éxito
+const showSuccessMessage = (title, text) => {
+  return showConfirmationMessage(title, text, "success");
 };
 
 //Incrementa la cantidad de un producto en el carrito
 const increaseQuantity = async (idProduct) => {
   const cartId = localStorage.getItem("cartId");
+  const token = localStorage.getItem("token");
 
   const response = await fetch(
     `http://localhost:8080/api/carts/${cartId}/product/${idProduct}`,
@@ -102,7 +74,7 @@ const increaseQuantity = async (idProduct) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         op: "add",
@@ -111,15 +83,15 @@ const increaseQuantity = async (idProduct) => {
   );
 
   const cart = await response.json();
-
-  showCartProducts();
   cartBadge();
-  return response;
+
+  return cart;
 };
 
 //Decrementa la cantidad de un producto en el carrito
 const decreaseQuantity = async (idProduct) => {
   const cartId = localStorage.getItem("cartId");
+  const token = localStorage.getItem("token");
 
   const response = await fetch(
     `http://localhost:8080/api/carts/${cartId}/product/${idProduct}`,
@@ -127,7 +99,7 @@ const decreaseQuantity = async (idProduct) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         op: "substract",
@@ -136,16 +108,15 @@ const decreaseQuantity = async (idProduct) => {
   );
 
   const cart = await response.json();
-
-  showCartProducts();
   cartBadge();
 
-  return response;
+  return cart;
 };
 
 //Elimina un producto del carrito
 const deleteProduct = async (idProduct) => {
   const cartId = localStorage.getItem("cartId");
+  const token = localStorage.getItem("token");
 
   const response = await fetch(
     `http://localhost:8080/api/carts/${cartId}/product/${idProduct}`,
@@ -153,94 +124,46 @@ const deleteProduct = async (idProduct) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     }
   );
 
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¡No podrás revertir esto!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, eliminar producto",
-    cancelButtonText: "Cancelar",
-    showClass: {
-      popup: "animate__animated animate__zoomIn",
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        icon: "success",
-        title: "Producto eliminado con éxito",
-        showConfirmButton: true,
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-      });
-    }
-  });
+  await showConfirmationMessage("Producto eliminado con éxito", "", "success");
 
-  showCartProducts();
+  const cart = await response.json();
   cartBadge();
 
-  return response;
+  return cart;
 };
 
 //Elimina todos los productos del carrito
 const emptyCart = async () => {
-  //Obtener cartId de localStorage
   const cartId = localStorage.getItem("cartId");
-  const response = await fetch(`http://localhost:8080/api/carts/${cartId}`, {
+  const token = localStorage.getItem("token");
+
+  await fetch(`http://localhost:8080/api/carts/${cartId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${token}`,
     },
   });
-};
 
-//Elimina todos los productos del carrito
-const deleteAllProducts = async () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¡No podrás revertir esto!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, vaciar carrito",
-    cancelButtonText: "Cancelar",
-    showClass: {
-      popup: "animate__animated animate__zoomIn",
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        icon: "success",
-        title: "Carrito vaciado con éxito",
-        showConfirmButton: true,
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-      });
-      emptyCart();
-      cartBadge();
-      showCartProducts();
-    }
-  });
+  await showSuccessMessage("Carrito vaciado con éxito", "");
+  cartBadge();
+  showCartProducts();
 };
 
 //Direccionar a la pagina de productos anterior
-const continueBuying = (page) => {
-  page = localStorage.getItem("currentPage");
+const continueBuying = () => {
+  const page = localStorage.getItem("currentPage");
   window.location.href = `http://127.0.0.1:5500/html/products.html`;
 };
 
 const showCartProducts = async () => {
   const cartId = localStorage.getItem("cartId");
+  const token = localStorage.getItem("token");
 
   try {
     const response = await fetch(
@@ -249,7 +172,7 @@ const showCartProducts = async () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -372,7 +295,19 @@ const showCartProducts = async () => {
         document
           .getElementById("finish-purchase-button")
           .addEventListener("click", function () {
-            finishPurchaseAction(products);
+            const user = JSON.parse(localStorage.getItem("user"));
+            const token = localStorage.getItem("token");
+            const cartId = localStorage.getItem("cartId");
+            const total = totalPurchase(products);
+            finishPurchase(products, cartId, user, token, total);
+            setTimeout(function () {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              localStorage.setItem("currentPage", 1);
+              localStorage.removeItem("cartId");
+              localStorage.removeItem("totalPurchase");
+              window.location.href = "../html/orderDetails.html";
+            }, 2000);
           });
       }, 1000);
     } else {

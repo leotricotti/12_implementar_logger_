@@ -5,9 +5,7 @@ const chatBox = document.getElementById("textAreaExample");
 // Agregar un evento de teclado al cuadro de chat
 chatBox.addEventListener("keyup", (e) => {
   if (e.key === "Enter" && chatBox.value.trim().length > 0) {
-    // Enviar el mensaje al servidor de Socket.IO
     socket.emit("message", { message: chatBox.value });
-    // Limpiar el cuadro de chat
     chatBox.value = "";
   }
 });
