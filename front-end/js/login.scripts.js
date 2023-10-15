@@ -20,6 +20,11 @@ const createCart = async () => {
   }
 };
 
+// Spinner en el botón de login
+const loginSpinner = () => {
+  loginButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...`;
+};
+
 // Función que captura la información del usuario y la almacena en el local storage
 const getUser = async () => {
   try {
@@ -73,7 +78,7 @@ const postLogin = async (username, password) => {
     const result = await response.json();
     localStorage.setItem("token", result.token);
 
-    if (result.message !== "Login correcto") {
+    if (result.message !== "Login realizado con éxito") {
       Swal.fire({
         icon: "error",
         title: "Oops...",

@@ -56,7 +56,7 @@ body {
 }
 
 .main-title {
-  margin-top: 80px;
+  margin-top: 90px;
 }
 
 .py-5 {
@@ -90,6 +90,9 @@ body {
 }
 
 /* Chat */
+.py-5 {
+  padding-top: 0 !important;
+}
 
 .chat-card-body {
   height: 330px;

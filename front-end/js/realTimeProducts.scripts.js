@@ -19,98 +19,78 @@ async function handleUpdateProduct(
   thumbnail
 ) {
   try {
-    if (
-      !id ||
-      !title ||
-      !description ||
-      !code ||
-      !price ||
-      !stock ||
-      !category
-    ) {
+    const product = {
+      title: title,
+      description: description,
+      code: code,
+      price: price,
+      stock: stock,
+      category: category,
+      thumbnail:
+        thumbnail === ""
+          ? {
+              img1: "https://freezedepot.com/wp-content/uploads/2023/05/producto-sin-imagen.png",
+            }
+          : thumbnail.value,
+    };
+
+    const response = await fetch(
+      `http://localhost:8080/api/realTimeProducts/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(product),
+      }
+    );
+    const result = await response.json();
+
+    if (!result.message === "Producto actualizado con éxito") {
       return Swal.fire({
         icon: "error",
-        title: "Lo siento...",
-        text: "Todos los campos son necesarios!",
-        focusConfirm: true,
+        title: "Oops...",
+        text: "Algo salió mal! Vuelve a intentarlo",
+        showConfirmButton: true,
+        confirmButtonText: "Aceptar",
         showClass: {
           popup: "animate__animated animate__zoomIn",
         },
       });
-    } else {
-      const product = {
-        title: title,
-        description: description,
-        code: code,
-        price: price,
-        stock: stock,
-        category: category,
-        thumbnail:
-          thumbnail === ""
-            ? {
-                img1: "https://freezedepot.com/wp-content/uploads/2023/05/producto-sin-imagen.png",
-              }
-            : thumbnail.value,
-      };
+    }
 
-      const response = await fetch(
-        `http://localhost:8080/api/realTimeProducts/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(product),
-        }
-      );
-      const result = await response.json();
-
-      if (!result.message === "Producto actualizado con éxito") {
-        return Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Algo salió mal! Vuelve a intentarlo",
-          showConfirmButton: true,
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, actualizar producto!",
+      cancelButtonText: "Cancelar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "¡Producto actualizado con éxito!",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
           confirmButtonText: "Aceptar",
           showClass: {
             popup: "animate__animated animate__zoomIn",
           },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setTimeout(function () {
+              window.location.reload();
+            }, 500);
+          }
         });
       }
-
-      Swal.fire({
-        title: "¿Estás seguro?",
-        text: "¡No podrás revertir esto!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Sí, actualizar producto!",
-        cancelButtonText: "Cancelar",
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: "¡Producto actualizado con éxito!",
-            icon: "success",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "Aceptar",
-            showClass: {
-              popup: "animate__animated animate__zoomIn",
-            },
-          }).then((result) => {
-            if (result.isConfirmed) {
-              setTimeout(function () {
-                window.location.reload();
-              }, 500);
-            }
-          });
-        }
-      });
-    }
+    });
   } catch (error) {
     console.log(error);
   }
