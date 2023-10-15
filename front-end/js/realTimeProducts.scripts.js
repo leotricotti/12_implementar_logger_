@@ -352,7 +352,9 @@ async function updateProductList() {
 
     products.forEach((product) => {
       //Capturar la url de la imagen
-      const imageUrl = product.thumbnail[0]["img1"];
+      const imageUrl =
+        product.thumbnail[0]?.img1 ??
+        "https://freezedepot.com/wp-content/uploads/2023/05/producto-sin-imagen.png";
 
       const item = document.createElement("div");
       item.classList.add("list-group-item");

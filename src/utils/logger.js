@@ -14,8 +14,8 @@ const customLevelOptions = {
     fatal: "red",
     error: "orange",
     warn: "yellow",
-    info: "green",
-    http: "blue",
+    info: "blue",
+    http: "green",
     debug: "purple",
   },
 };
