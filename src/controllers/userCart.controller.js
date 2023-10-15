@@ -1,4 +1,4 @@
-import { usersService } from "../repository/users.js";
+import { usersService } from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateUserCartErrorInfo } from "../services/errors/info.js";

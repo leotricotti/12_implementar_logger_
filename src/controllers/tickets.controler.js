@@ -1,6 +1,6 @@
-import { ticketsService } from "../repository/tickets.js";
-import { cartService } from "../repository/cart.js";
-import { productsService } from "../repository/products.js";
+import { ticketsService } from "../repository/index.js";
+import { cartService } from "../repository/index.js";
+import { productsService } from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";

@@ -10,8 +10,9 @@ import ProductsRouter from "./routes/products.routes.js";
 import RealTimeProducts from "./routes/realTimeProducts.routes.js";
 import MockingProducts from "./routes/mockingProducts.routes.js";
 import {
-  initializePassport,
-  githubStrategy,
+  initializeRegisterStrategy,
+  initializeGithubStrategy,
+  initializeJwtStrategy,
 } from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
 import { authToken, authorization } from "./utils/utils.js";
@@ -37,8 +38,9 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 // Passport
-githubStrategy();
-initializePassport();
+initializeRegisterStrategy();
+initializeJwtStrategy();
+initializeGithubStrategy();
 app.use(cookieParser());
 app.use(passport.initialize());
 

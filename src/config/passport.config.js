@@ -19,7 +19,10 @@ const ADMIN_ID = process.env.ADMIN_ID;
 const JWT_SECRET = process.env.JWT_SECRET;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-const initializePassport = () => {
+/**
+ * Inicializa la estrategia de autenticación JWT.
+ */
+const initializeJwtStrategy = () => {
   passport.use(
     "jwt",
     new JWTStrategy(
@@ -29,21 +32,15 @@ const initializePassport = () => {
       },
       async (jwt_payload, done) => {
         try {
-          //validar que el usuario exista en la base de datos
-          let response = await usersService.getOneUser(
-            jwt_payload.user.username
-          );
-          if (!response) {
-            req.logger.error(
-              `Error de autenticación. Usuario inexistente ${new Date().toLocaleString()}`
-            );
-            CustomError.createError({
+          const user = await usersService.getOneUser(jwt_payload.user.username);
+          if (!user) {
+            const error = new CustomError({
               name: "Error de autenticación",
-              cause: generateAuthErrorInfo(carts, EErrors.AUTH_ERROR),
+              cause: generateAuthErrorInfo(user, EErrors.AUTH_ERROR),
               message: "Usuario inexistente",
               code: EErrors.AUTH_ERROR,
             });
-            return done(null, false, { message: "Usuario inexistente" });
+            return done(error);
           } else {
             return done(null, jwt_payload);
           }
@@ -53,8 +50,12 @@ const initializePassport = () => {
       }
     )
   );
+};
 
-  // Configurar passport para registrar usuarios
+/**
+ * Inicializa la estrategia de registro de usuarios.
+ */
+const initializeRegisterStrategy = () => {
   passport.use(
     "register",
     new LocalStrategy(
@@ -63,60 +64,55 @@ const initializePassport = () => {
         passReqToCallback: true,
         usernameField: "email",
       },
-      async (req, username, password, done) => {
-        const { first_name, last_name, email } = req.body;
-        let role;
-        if (username === ADMIN_ID || password === ADMIN_PASSWORD) {
-          role = "admin";
-        } else {
-          role = "user";
-        }
+      async (req, email, password, done) => {
+        const { first_name, last_name } = req.body;
+        const role =
+          email === ADMIN_ID || password === ADMIN_PASSWORD ? "admin" : "user";
         try {
-          const user = await usersService.getOneUser(username);
-          if (user.length > 0) {
-            req.logger.error(
-              `Error de autenticación. El usuario ya existe ${new Date().toLocaleString()}`
-            );
-            CustomError.createError({
+          const user = await usersService.getOneUser(email);
+          if (user) {
+            const error = new CustomError({
               name: "Error de autenticación",
-              cause: generateAuthErrorInfo(carts, EErrors.AUTH_ERROR),
+              cause: generateAuthErrorInfo(user, EErrors.AUTH_ERROR),
               message: "El usuario ya existe",
               code: EErrors.AUTH_ERROR,
             });
-            return done(null, false, {
-              message: "Error al crear el usuario. El usuario ya existe",
-            });
+            return done(error);
           } else {
             const newUser = {
               first_name,
               last_name,
               email,
               password: createHash(password),
-              role: role,
+              role,
             };
-            let result = await usersService.signupUser(newUser);
+            const result = await usersService.signupUser(newUser);
             return done(null, result);
           }
         } catch (error) {
-          return done("Error al obtener el usuario", error);
+          return done(error);
         }
       }
     )
   );
-
-  // Serializar y deserializar usuarios
-  passport.serializeUser((user, done) => {
-    done(null, user[0].email);
-  });
-
-  passport.deserializeUser(async (id, done) => {
-    let user = await usersService.getOneUser(id);
-    done(null, user);
-  });
 };
 
-// Configurar passport para loguear usuarios con github
-const githubStrategy = () => {
+/**
+ * Serializa y deserializa usuarios.
+ */
+passport.serializeUser((user, done) => {
+  done(null, user[0].email);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await usersService.getOneUser(id);
+  done(null, user);
+});
+
+/**
+ * Configura passport para loguear usuarios con GitHub.
+ */
+const initializeGithubStrategy = () => {
   passport.use(
     "github",
     new GitHubStrategy(
@@ -129,7 +125,7 @@ const githubStrategy = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const user = await usersService.getOneUser(profile?.emails[0]?.value);
-          if (user.length === 1) {
+          if (user) {
             return done(null, user);
           } else {
             const newUser = {
@@ -142,11 +138,15 @@ const githubStrategy = () => {
             return done(null, userNew);
           }
         } catch (error) {
-          return done("Error al crear el usuario", error);
+          return done(error);
         }
       }
     )
   );
 };
 
-export { initializePassport, githubStrategy };
+export {
+  initializeJwtStrategy,
+  initializeRegisterStrategy,
+  initializeGithubStrategy,
+};
