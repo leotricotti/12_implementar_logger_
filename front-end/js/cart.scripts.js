@@ -118,23 +118,55 @@ const deleteProduct = async (idProduct) => {
   const cartId = localStorage.getItem("cartId");
   const token = localStorage.getItem("token");
 
-  const response = await fetch(
-    `http://localhost:8080/api/carts/${cartId}/product/${idProduct}`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "No podrás revertir esta acción!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    confirmButtonText: "Aceptar",
+    cancelButtonColor: "#d33",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const response = await fetch(
+        `http://localhost:8080/api/carts/${cartId}/product/${idProduct}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        return Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Algo salió mal! Vuelve a intentarlo",
+          showConfirmButton: true,
+          confirmButtonText: "Aceptar",
+          showClass: {
+            popup: "animate__animated animate__zoomIn",
+          },
+        });
+      }
+
+      showCartProducts();
+
+      Swal.fire({
+        icon: "success",
+        title: "Producto eliminado con exito!",
+        showConfirmButton: true,
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+      });
     }
-  );
-
-  await showConfirmationMessage("Producto eliminado con éxito", "", "success");
-
-  const cart = await response.json();
-  cartBadge();
-
-  return cart;
+  });
 };
 
 //Elimina todos los productos del carrito
@@ -326,6 +358,7 @@ const showCartProducts = async () => {
   } catch (error) {
     console.error(error);
   }
+  showCartProducts();
 };
 
 showCartProducts();

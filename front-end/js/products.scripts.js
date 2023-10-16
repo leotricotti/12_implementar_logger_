@@ -191,20 +191,7 @@ const addProduct = async (idProduct) => {
       }
     );
 
-    if (response) {
-      Swal.fire({
-        icon: "success",
-        title: "Producto agregado con éxito",
-        showConfirmButton: false,
-        timer: 1500,
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-      }).then(() => {
-        cartBadge();
-      });
-    }
-
+    cartBadge();
     return response;
   } catch (error) {
     console.log(error);
