@@ -398,6 +398,7 @@ function eliminarProducto(id) {
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
+    confirmButtonText: "Aceptar",
     cancelButtonColor: "#d33",
     showClass: {
       popup: "animate__animated animate__zoomIn",
@@ -428,7 +429,7 @@ function eliminarProducto(id) {
         });
       }
 
-      updateProductList();
+      window.location.reload();
 
       Swal.fire({
         icon: "success",
