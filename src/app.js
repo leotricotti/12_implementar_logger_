@@ -69,8 +69,7 @@ app.use(
 );
 app.use(
   "/api/mockingProducts",
-  authToken,
-  authorization("user"),
+
   MockingProducts
 );
 app.use(errorHandler);

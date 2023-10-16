@@ -139,7 +139,7 @@ function generateProducts() {
     description: faker.commerce.productDescription(),
     code: faker.commerce.product(),
     price: faker.commerce.price(),
-    stock: faker.random.number(),
+    stock: faker.number.int(20),
     category: faker.commerce.department(),
     image: faker.image.url(),
   };
