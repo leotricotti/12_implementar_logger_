@@ -14,20 +14,20 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Route that performs user registration
 async function signupUser(req, res) {
-  req.logger.info(`User created successfully ${new Date().toLocaleString()}`);
-  res.status(200).json({ message: "User created successfully" });
+  req.logger.info(`Usuario creado con éxito ${new Date().toLocaleString()}`);
+  res.status(200).json({ message: "Usuario creado con éxito" });
 }
 
 // Route that executes when user registration fails
 async function failRegister(req, res, next) {
   const result = [];
   req.logger.error(
-    `Database error: Error creating user ${new Date().toLocaleString()}`
+    `Error de base de datos: Error al crear el usuario ${new Date().toLocaleString()}`
   );
   CustomError.createError({
-    name: "Database error",
+    name: "Error de base de datos",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-    message: "Error creating user",
+    message: "Error al crear el usuario",
     code: EErrors.DATABASE_ERROR,
   });
   next();
@@ -40,12 +40,12 @@ async function loginUser(req, res, next) {
     if (!username || !password) {
       const result = [username, password];
       req.logger.error(
-        `Data type error: Error logging in ${new Date().toLocaleString()}`
+        `Error de tipo de dato: Error de inicio de sesión ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Data type error",
+        name: "Error de tipo de dato",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "Error logging in",
+        message: "Error de inicio de sesión",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     } else {
@@ -56,12 +56,12 @@ async function loginUser(req, res, next) {
         !isValidPassword(result[0].password, password)
       ) {
         req.logger.error(
-          `Database error: Error getting user ${new Date().toLocaleString()}`
+          `Error de base de datos: Usuario no encontrado ${new Date().toLocaleString()}`
         );
         CustomError.createError({
-          name: "Database error",
+          name: "Error de base de datos",
           cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-          message: "Error getting user",
+          message: "Usuario no encontrado",
           code: EErrors.DATABASE_ERROR,
         });
       } else {
@@ -71,8 +71,10 @@ async function loginUser(req, res, next) {
           password,
           role: result[0].role,
         });
-        req.logger.info(`Login successful ${new Date().toLocaleString()}`);
-        res.json({ message: "Login successful", token: myToken });
+        req.logger.info(
+          `Login realizado con éxito ${new Date().toLocaleString()}`
+        );
+        res.json({ message: "Login realizado con éxito", token: myToken });
       }
     }
   } catch (error) {
@@ -84,12 +86,12 @@ async function loginUser(req, res, next) {
 async function failLogin(req, res, next) {
   const result = [];
   req.logger.error(
-    `Database error: Error logging in ${new Date().toLocaleString()}`
+    `Error de base de datos: Error al iniciar sessión ${new Date().toLocaleString()}`
   );
   CustomError.createError({
-    name: "Database error",
+    name: "Error de base de datos",
     cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-    message: "Error logging in",
+    message: "Error al iniciar sessión",
     code: EErrors.DATABASE_ERROR,
   });
   return next();
@@ -102,12 +104,12 @@ async function forgotPassword(req, res) {
     if (!username || !newPassword) {
       const result = [username, newPassword];
       req.logger.error(
-        `Data type error: Error updating password ${new Date().toLocaleString()}`
+        `Error de tipo de dato: Error al actualizar la contraseña ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Data type error",
+        name: "Error de tipo de dato",
         cause: generateSessionErrorInfo(result, EErrors.INVALID_TYPES_ERROR),
-        message: "Error updating password",
+        message: "Error al actualizar la contraseña",
         code: EErrors.INVALID_TYPES_ERROR,
       });
     }
@@ -115,12 +117,12 @@ async function forgotPassword(req, res) {
 
     if (result.length === 0) {
       req.logger.error(
-        `Database error: Error getting user ${new Date().toLocaleString()}`
+        `Error de base de datos: Usuario no encontrado ${new Date().toLocaleString()}`
       );
       CustomError.createError({
-        name: "Database error",
+        name: "Error de base de datos",
         cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-        message: "Error getting user",
+        message: "Usuario no encontrado",
         code: EErrors.DATABASE_ERROR,
       });
     } else {
@@ -129,10 +131,10 @@ async function forgotPassword(req, res) {
         createHash(newPassword)
       );
       req.logger.info(
-        `Password updated successfully ${new Date().toLocaleString()}`
+        `Contraseña actualizada con éxito ${new Date().toLocaleString()}`
       );
       res.status(200).json({
-        response: "Password updated successfully",
+        response: "Contraseña actualizada con éxito",
       });
     }
   } catch (error) {
