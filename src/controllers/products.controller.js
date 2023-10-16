@@ -33,6 +33,21 @@ async function getAll(req, res, next) {
   }
 }
 
+// Funcion para obtener un producto por id
+async function getOne(req, res, next) {
+  const { id } = req.params;
+  try {
+    const product = await productsService.getOneProduct(id);
+    const message = `Producto obtenido con éxito ${new Date().toLocaleString()}`;
+    const errorMessage = `Error de base de datos: Error al obtener el producto ${new Date().toLocaleString()}`;
+    const error = generateError(product, message, errorMessage);
+    res.json({ message, product });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Funcion para generar errores
 function generateError(products, message, errorMessage) {
   if (products.length === 0) {
     req.logger.error(errorMessage);
@@ -45,4 +60,4 @@ function generateError(products, message, errorMessage) {
   }
 }
 
-export { getAll };
+export { getAll, getOne };
