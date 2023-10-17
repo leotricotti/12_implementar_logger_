@@ -9,8 +9,6 @@ async function finishPurchase(req, res, next) {
   const { username, amountPurchase, products } = req.body;
   const { cid } = req.params;
 
-  console.log(username, amountPurchase, products, cid);
-
   try {
     if (!username || !amountPurchase || !products || !cid) {
       req.logger.error(

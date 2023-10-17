@@ -18,11 +18,13 @@ const totalPurchase = (products, discount = 0.85) => {
 };
 
 // Funcion que finaliza la compra
-async function finishPurchase(products, amountPurchase) {
+async function finishPurchase() {
   const cartId = localStorage.getItem("cartId");
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log(products);
+  const products = JSON.parse(localStorage.getItem("cart"));
+  const amountPurchase = totalPurchase(products);
+
   try {
     const response = await fetch(
       `http://localhost:8080/api/carts/${cartId}/purchase`,
@@ -34,35 +36,58 @@ async function finishPurchase(products, amountPurchase) {
         },
         body: JSON.stringify({
           username: user.username,
-          products,
+          products: products,
           amountPurchase,
         }),
       }
     );
+
     const result = await response.json();
+    console.log(result);
     localStorage.setItem("order", JSON.stringify(result));
+    finishPurchaseAction();
   } catch (error) {
     console.error(error);
   }
 }
 
-// Funcion que muestra un mensaje de confirmación
-const showConfirmationMessage = (title, text, icon) => {
-  return Swal.fire({
-    title,
-    text,
-    icon,
-    confirmButtonColor: "#3085d6",
-    confirmButtonText: "Aceptar",
+// Funcion que confirma o rechaza la compra
+const finishPurchaseAction = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡No podrás revertir esto!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, finalizar compra",
+    cancelButtonText: "Cancelar",
     showClass: {
       popup: "animate__animated animate__zoomIn",
     },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "¡Compra finalizada con éxito!",
+        text: "En unos minutos recibirás un correo con los detalles de tu compra",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Aceptar",
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.setItem("currentPage", 1);
+          localStorage.removeItem("cartId");
+          localStorage.removeItem("cart");
+          window.location.href = "../html/orderDetails.html";
+        }
+      });
+    }
   });
-};
-
-// Funcion que muestra un mensaje de éxito
-const showSuccessMessage = (title, text) => {
-  return showConfirmationMessage(title, text, "success");
 };
 
 //Incrementa la cantidad de un producto en el carrito
@@ -213,9 +238,7 @@ const showCartProducts = async () => {
     );
     const cart = await response.json();
     const products = cart.data.products;
-    const productsId = [];
-    products.map((product) => productsId.push(product.product._id));
-    const amountPurchase = totalPurchase(products);
+    localStorage.setItem("cart", JSON.stringify(products));
     let html = "";
     let cartNav = "";
     if (products.length > 0) {
@@ -245,12 +268,12 @@ const showCartProducts = async () => {
                 Vaciar carrito
               </button>
               <button
-                class="btn btn-secondary btn-sm mb-2"
-                type="button"
-                onclick="finishPurchase('${productsId}', ${amountPurchase})"
-              >
-                Finalizar compra
-              </button>
+              class="btn btn-secondary btn-sm mb-2"
+              type="button"
+              onclick="finishPurchase()"
+            >
+              Finalizar compra
+            </button>
             </nav> 
             </div>`;
 
