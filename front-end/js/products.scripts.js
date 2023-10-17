@@ -93,9 +93,9 @@ const productsHandler = async (handler, index) => {
                 </div>
                 <h6 class="text-success">Envio gratis</h6>
                 <div class="d-flex flex-column mt-4">
-                  <button class="btn btn-primary btn-sm" type="button">
-                    Detalles
-                  </button>
+                <button class="btn btn-primary btn-sm" type="button" onclick="showDetailedInfo ('${product._id}')">
+                Detalles
+              </button>
                   <button
                     class="btn btn-outline-primary btn-sm mt-2"
                     type="button"

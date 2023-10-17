@@ -216,6 +216,12 @@
           </ul>
         </nav>
       </div>
+      <section
+        class="position-fixed top-0 left-0 z-5 h-100 w-100 d-none d-flex align-items-center"
+        style="background-color: rgba(0, 0, 0, 0.4)"
+        id="product-details"
+        onclick="toggleDetailsProducts()"
+      ></section>
       <section class="chat-section">
         <img
           src="../img/logo.jpg"
@@ -282,7 +288,6 @@
           </div>
         </div>
       </section>
-
       <footer class="border-top me-3 ms-3">
         <div
           class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4"
@@ -296,7 +301,7 @@
               width="25"
               height="25"
             />
-            <a class="navbar-brand" href="#"> E-Store </a>
+            <a class="navbar-brand" href="products.html"> E-Store </a>
           </div>
 
           <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
@@ -347,6 +352,8 @@
     <script src="../js/logout.scripts.js"></script>
     <!-- Pagination JS -->
     <script src="../js/pagination.scripts.js"></script>
+    <!-- Products JS -->
+    <script src="../js/productDetails.scripts.js"></script>
     <!--Spinner-->
     <script src="../js/spinner.scripts.js"></script>
     <!-- Custom JS -->
