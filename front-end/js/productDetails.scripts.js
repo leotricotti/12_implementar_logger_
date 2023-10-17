@@ -4,11 +4,16 @@ function changeImage(element) {
   main_prodcut_image.src = element.src;
 }
 
-//Inicializar spinner
+// Abre y cierra el detalle del producto
 function toggleDetailsProducts() {
   document.getElementById("product-details").classList.toggle("d-none");
   document.getElementById("pagination").classList.toggle("d-none");
   document.getElementById("navbar-top").classList.toggle("d-none");
+}
+
+function addProdutAndCloseDetails(id) {
+  addProduct(id);
+  toggleDetailsProducts();
 }
 
 const showDetailedInfo = async (id) => {
@@ -46,7 +51,7 @@ const showDetailedInfo = async (id) => {
                 <span class="rated">${product.category}</span> 
                 </div>
                 <div class="col-md-3 col-xs-3">
-                    <div class="rating text-right"> 
+                    <div class="rating text-right text-danger"> 
                     <i class="fa fa-star"></i> 
                     <i class="fa fa-star"></i> 
                     <i class="fa fa-star"></i> 
@@ -58,15 +63,25 @@ const showDetailedInfo = async (id) => {
         <div class="bottom-wrap-payment">
             <figcaption class="info-wrap">
                 <div class="row">
-                    <div class="col-md-9 col-xs-9"> <a href="#" class="title" data-abc="true">$3,999</a> <span class="rated">VISA Platinum</span> </div>
+                    <div class="col-md-9 col-xs-9"> 
+                      <span class="title">
+                        $ ${(product.price * 0.85).toFixed(2)}
+                      </span> 
+                      <span class="rated text-danger"> 
+                        <s>$ ${product.price}</s>
+                      </span> 
+                    </div>
                     <div class="col-md-3 col-xs-3">
-                        <div class="rating text-right"> #### 8787 </div>
+                        <div class="rating text-right">Envio gratis</div>
                     </div>
                 </div>
             </figcaption>
         </div>
-        <div class="bottom-wrap d-flex justify-content-between "> <a href="#" class="btn-product-details  btn-primary float-right" data-abc="true"> Buy now </a>
-            <div class="price-wrap"> <a href="#" class="btn-product-details  btn-warning float-left" data-abc="true"> Cancel </a> </div>
+        <div class="bottom-wrap d-flex justify-content-between "> <button
+        onclick="addProdutAndCloseDetails('${
+          product._id
+        }')" class="btn-product-details  btn-primary float-right">Comprar</button>
+            <div class="price-wrap"> <button onclick=toggleDetailsProducts() class="btn-product-details  btn-warning float-left" data-abc="true">Cancelar</button> </div>
         </div>
     </figure>
     `;
