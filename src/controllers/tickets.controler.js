@@ -6,18 +6,20 @@ import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";
 
 async function finishPurchase(req, res, next) {
-  const { username, totalPurchase, products } = req.body;
+  const { username, amountPurchase, products } = req.body;
   const { cid } = req.params;
 
+  console.log(username, amountPurchase, products, cid);
+
   try {
-    if (!username || !totalPurchase || !products || !cid) {
+    if (!username || !amountPurchase || !products || !cid) {
       req.logger.error(
         `Error de tipo de dato: Error al finalizar la compra ${new Date().toLocaleString()}`
       );
       throw CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateTicketErrorInfo(
-          [username, totalPurchase, products, cid],
+          [username, amountPurchase, products, cid],
           EErrors.INVALID_TYPES_ERROR
         ),
         message: "Error al finalizar la compra",
@@ -68,7 +70,7 @@ async function finishPurchase(req, res, next) {
       const newTicket = {
         code: Math.floor(Math.random() * 1000000),
         purchase_datetime: new Date().toLocaleString(),
-        amount: totalPurchase,
+        amount: amountPurchase,
         purchaser: username,
       };
 
@@ -101,7 +103,7 @@ async function finishPurchase(req, res, next) {
       const newTicket = {
         code: Math.floor(Math.random() * 1000000),
         purchase_datetime: new Date().toLocaleString(),
-        amount: (totalPurchase - missingProductDiscount).toFixed(2),
+        amount: (amountPurchase - missingProductDiscount).toFixed(2),
         purchaser: username,
       };
 

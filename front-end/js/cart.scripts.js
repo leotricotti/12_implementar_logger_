@@ -18,7 +18,11 @@ const totalPurchase = (products, discount = 0.85) => {
 };
 
 // Funcion que finaliza la compra
-async function finishPurchase(products, cartId, user, token, totalPurchase) {
+async function finishPurchase(products, amountPurchase) {
+  const cartId = localStorage.getItem("cartId");
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log(products);
   try {
     const response = await fetch(
       `http://localhost:8080/api/carts/${cartId}/purchase`,
@@ -31,13 +35,11 @@ async function finishPurchase(products, cartId, user, token, totalPurchase) {
         body: JSON.stringify({
           username: user.username,
           products,
-          totalPurchase,
-          cartId,
+          amountPurchase,
         }),
       }
     );
     const result = await response.json();
-
     localStorage.setItem("order", JSON.stringify(result));
   } catch (error) {
     console.error(error);
@@ -84,6 +86,7 @@ const increaseQuantity = async (idProduct) => {
 
   const cart = await response.json();
   cartBadge();
+  showCartProducts();
 
   return cart;
 };
@@ -109,7 +112,7 @@ const decreaseQuantity = async (idProduct) => {
 
   const cart = await response.json();
   cartBadge();
-
+  showCartProducts();
   return cart;
 };
 
@@ -210,6 +213,9 @@ const showCartProducts = async () => {
     );
     const cart = await response.json();
     const products = cart.data.products;
+    const productsId = [];
+    products.map((product) => productsId.push(product.product._id));
+    const amountPurchase = totalPurchase(products);
     let html = "";
     let cartNav = "";
     if (products.length > 0) {
@@ -241,11 +247,11 @@ const showCartProducts = async () => {
               <button
                 class="btn btn-secondary btn-sm mb-2"
                 type="button"
-                id="finish-purchase-button"
+                onclick="finishPurchase('${productsId}', ${amountPurchase})"
               >
                 Finalizar compra
               </button>
-            </nav>
+            </nav> 
             </div>`;
 
       html += `
@@ -322,26 +328,6 @@ const showCartProducts = async () => {
     )}</h5></div>
     </div>
     `;
-      // Espera 1 segundo antes de agregar el evento click al botón "Finalizar compra"
-      setTimeout(function () {
-        document
-          .getElementById("finish-purchase-button")
-          .addEventListener("click", function () {
-            const user = JSON.parse(localStorage.getItem("user"));
-            const token = localStorage.getItem("token");
-            const cartId = localStorage.getItem("cartId");
-            const total = totalPurchase(products);
-            finishPurchase(products, cartId, user, token, total);
-            setTimeout(function () {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              localStorage.setItem("currentPage", 1);
-              localStorage.removeItem("cartId");
-              localStorage.removeItem("totalPurchase");
-              window.location.href = "../html/orderDetails.html";
-            }, 2000);
-          });
-      }, 1000);
     } else {
       html += `
         <nav class="d-flex mb-3 nav-products mt-5 flex-wrap justify-content-center">
@@ -358,7 +344,6 @@ const showCartProducts = async () => {
   } catch (error) {
     console.error(error);
   }
-  showCartProducts();
 };
 
 showCartProducts();
