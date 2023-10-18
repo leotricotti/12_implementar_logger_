@@ -197,23 +197,14 @@ const deleteProduct = async (idProduct) => {
   });
 };
 
-// Funcion que muestra un mensaje de confirmación
-const showConfirmationMessage = (title, text, icon) => {
-  return Swal.fire({
-    title,
-    text,
-    icon,
-    confirmButtonColor: "#3085d6",
-    confirmButtonText: "Aceptar",
-    showClass: {
-      popup: "animate__animated animate__zoomIn",
-    },
-  });
-};
-
-// Funcion que muestra un mensaje de éxito
-const showSuccessMessage = (title, text) => {
-  return showConfirmationMessage(title, text, "success");
+//Funcion que posiciona el footer al final de la pagina
+const positionFixedFooter = () => {
+  const footer = document.getElementById("footer");
+  if (window.innerHeight > document.body.clientHeight) {
+    footer.classList.add("fixed-bottom");
+  } else {
+    footer.classList.remove("fixed-bottom");
+  }
 };
 
 //Elimina todos los productos del carrito
@@ -228,10 +219,37 @@ const emptyCart = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-
-  await showSuccessMessage("Carrito vaciado con éxito", "");
-  cartBadge();
   showCartProducts();
+};
+
+//Elimina todos los productos del carrito
+const deleteAllProducts = async () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡No podrás revertir esto!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, vaciar carrito",
+    cancelButtonText: "Cancelar",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        icon: "success",
+        title: "Carrito vaciado con éxito",
+        showConfirmButton: true,
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+      });
+      emptyCart();
+      cartBadge();
+    }
+  });
 };
 
 //Direccionar a la pagina de productos anterior
@@ -383,6 +401,7 @@ const showCartProducts = async () => {
 
     document.getElementById("cart-nav-container").innerHTML = cartNav;
     document.getElementById("cart-container").innerHTML = html;
+    positionFixedFooter();
   } catch (error) {
     console.error(error);
   }
