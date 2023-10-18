@@ -29,9 +29,9 @@ const showDetailedInfo = async (id) => {
     });
 
     const data = await response.json();
-    const { message, product } = data;
+    const { product } = data;
     const productDetails = document.getElementById("product-details");
-    console.log(product);
+
     const productDetailsHtml = `
     <figure class="card-product-details  card-product-grid card-lg">
     ${product.thumbnail
@@ -81,7 +81,7 @@ const showDetailedInfo = async (id) => {
         onclick="addProdutAndCloseDetails('${
           product._id
         }')" class="btn-product-details  btn-primary float-right">Comprar</button>
-            <div class="price-wrap"> <button onclick=toggleDetailsProducts() class="btn-product-details  btn-warning float-left" data-abc="true">Cancelar</button> </div>
+            <div class="price-wrap"> <button onclick=toggleDetailsProducts() class="btn-product-details  btn-warning link-secondary float-left" data-abc="true">Cancelar</button> </div>
         </div>
     </figure>
     `;

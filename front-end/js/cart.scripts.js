@@ -43,7 +43,7 @@ async function finishPurchase() {
     );
 
     const result = await response.json();
-    console.log(result);
+
     localStorage.setItem("order", JSON.stringify(result));
     finishPurchaseAction();
   } catch (error) {
