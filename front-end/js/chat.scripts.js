@@ -10,6 +10,7 @@ chatBox.addEventListener("keyup", (e) => {
   }
 });
 
+// Posicionar el icono de chat en la parte inferior de la página
 const positionFixedChatIcon = () => {
   const chatIcon = document.getElementById("chat-img-id");
   const scrollPosition = window.scrollY;

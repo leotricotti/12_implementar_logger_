@@ -6,7 +6,7 @@ import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";
 
 async function finishPurchase(req, res, next) {
-  const { username, products } = req.body;
+  const { username, products, amountPurchase } = req.body;
   const { cid } = req.params;
 
   try {

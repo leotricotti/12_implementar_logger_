@@ -60,3 +60,7 @@
 {"level":"error","message":"Authentication error. Failed to verify token 17/10/2023, 20:19:57"}
 {"level":"error","message":"Authentication error. Failed to verify token 18/10/2023, 10:03:17"}
 {"level":"error","message":"Authentication error. Failed to verify token 18/10/2023, 10:03:18"}
+{"level":"error","message":"Authentication error. Failed to verify token 18/10/2023, 14:00:16"}
+{"level":"error","message":"Authentication error. Failed to verify token 18/10/2023, 14:00:16"}
+{"level":"error","message":"Authentication error. User without permissions 18/10/2023, 14:31:41"}
+{"level":"error","message":"Authentication error. User without permissions 18/10/2023, 14:32:39"}
