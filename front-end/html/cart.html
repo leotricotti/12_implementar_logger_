@@ -95,11 +95,7 @@
       </nav>
 
       <div class="container h-100 py-5 mb-1 pb-2" id="cart-nav-container"></div>
-      <div
-        id="cart-container"
-        style="margin-bottom: 100px"
-        class="wrapper"
-      ></div>
+      <div id="cart-container"></div>
       <section class="chat-section">
         <img
           src="../img/logo.jpg"
@@ -107,7 +103,7 @@
           alt="Chat logo"
           id="chat-img-id"
         />
-        <div class="container chat-container-item py-5">
+        <div class="container chat-container-item py-5 h-0">
           <div class="row d-flex justify-content-center">
             <div class="col-md-8 col-lg-6 col-xl-4">
               <div
@@ -126,10 +122,11 @@
                   <p class="mb-0 fw-bold">E-Store Chat</p>
                   <i class="fas fa-times" id="chat-close"></i>
                 </div>
-                <div class="card-body">
+                <div class="card-body chat-card-body">
                   <div class="messages">
                     <div class="d-flex flex-row justify-content-start mb-4">
                       <img
+                        class="rounded-circle"
                         src="../img/logo.jpg"
                         alt="avatar 1"
                         style="width: 45px; height: 100%"
@@ -147,8 +144,8 @@
                         </p>
                       </div>
                     </div>
+                    <div id="message-logs"></div>
                   </div>
-                  <div id="message-logs"></div>
                   <div class="form-outline">
                     <textarea
                       class="form-control chat-form"

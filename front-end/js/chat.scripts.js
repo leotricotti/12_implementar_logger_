@@ -10,6 +10,22 @@ chatBox.addEventListener("keyup", (e) => {
   }
 });
 
+const positionFixedChatIcon = () => {
+  const chatIcon = document.getElementById("chat-img-id");
+  const scrollPosition = window.scrollY;
+  const pageHeight = document.body.scrollHeight - window.innerHeight;
+
+  if (scrollPosition > pageHeight - 150) {
+    chatIcon.style.position = "fixed";
+    chatIcon.style.bottom = "150px";
+  } else {
+    chatIcon.style.position = "fixed";
+    chatIcon.style.bottom = "";
+  }
+};
+
+window.addEventListener("scroll", positionFixedChatIcon);
+
 // Escuchar los mensajes del servidor de Socket.IO y renderizarlos en el HTML
 socket.on("messageLogs", (data) => {
   const log = document.getElementById("message-logs");
@@ -18,7 +34,7 @@ socket.on("messageLogs", (data) => {
   data.forEach((elem) => {
     message += `
       <div class="d-flex flex-row justify-content-end mb-4">
-        <div class="p-3 me-3 border" style="border-radius: 15px; background-color: #fbfbfb">
+        <div class="rounded-circle" style="border-radius: 15px; background-color: #fbfbfb">
           <p class="small mb-0">${elem.mensaje}</p>
         </div>
         <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%">
