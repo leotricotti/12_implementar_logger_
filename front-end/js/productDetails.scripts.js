@@ -81,7 +81,7 @@ const showDetailedInfo = async (id) => {
         onclick="addProdutAndCloseDetails('${
           product._id
         }')" class="btn-product-details  btn-primary float-right">Comprar</button>
-            <div class="price-wrap"> <button onclick=toggleDetailsProducts() class="btn-product-details  btn-warning link-secondary float-left" data-abc="true">Cancelar</button> </div>
+            <div class="price-wrap"> <button onclick=toggleDetailsProducts() class="btn-product-details  btn-warning link-dark float-left" data-abc="true">Cancelar</button> </div>
         </div>
     </figure>
     `;

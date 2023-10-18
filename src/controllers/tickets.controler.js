@@ -6,7 +6,7 @@ import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";
 
 async function finishPurchase(req, res, next) {
-  const { username, amountPurchase, products } = req.body;
+  const { username, products } = req.body;
   const { cid } = req.params;
 
   try {
@@ -17,7 +17,7 @@ async function finishPurchase(req, res, next) {
       throw CustomError.createError({
         name: "Error de tipo de dato",
         cause: generateTicketErrorInfo(
-          [username, amountPurchase, products, cid],
+          [username, products, amountPurchase, cid],
           EErrors.INVALID_TYPES_ERROR
         ),
         message: "Error al finalizar la compra",
@@ -45,6 +45,10 @@ async function finishPurchase(req, res, next) {
       (product) => product.product.stock > product.quantity
     );
 
+    const totalPurchase = productWithStock.reduce((acc, product) => {
+      return acc + product.product.price * product.quantity * 0.85;
+    });
+
     await Promise.all(
       productWithStock.map(async (product) => {
         const newStock = product.product.stock - product.quantity;
@@ -68,7 +72,7 @@ async function finishPurchase(req, res, next) {
       const newTicket = {
         code: Math.floor(Math.random() * 1000000),
         purchase_datetime: new Date().toLocaleString(),
-        amount: amountPurchase,
+        amount: totalPurchase.toFixed(2),
         purchaser: username,
       };
 
@@ -96,7 +100,6 @@ async function finishPurchase(req, res, next) {
     } else {
       cart.products = [...productWithOutStock];
       const result = await cartService.updateOneCart(cid, cart);
-      const remainingProducts = await cartService.getOneCart(cid);
 
       const newTicket = {
         code: Math.floor(Math.random() * 1000000),

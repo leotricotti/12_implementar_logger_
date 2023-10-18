@@ -197,6 +197,25 @@ const deleteProduct = async (idProduct) => {
   });
 };
 
+// Funcion que muestra un mensaje de confirmación
+const showConfirmationMessage = (title, text, icon) => {
+  return Swal.fire({
+    title,
+    text,
+    icon,
+    confirmButtonColor: "#3085d6",
+    confirmButtonText: "Aceptar",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+  });
+};
+
+// Funcion que muestra un mensaje de éxito
+const showSuccessMessage = (title, text) => {
+  return showConfirmationMessage(title, text, "success");
+};
+
 //Elimina todos los productos del carrito
 const emptyCart = async () => {
   const cartId = localStorage.getItem("cartId");

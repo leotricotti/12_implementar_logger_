@@ -73,8 +73,6 @@ const postLogin = async (username, password) => {
     const result = await response.json();
     localStorage.setItem("token", result.token);
 
-    console.log(result);
-
     if (result.message !== "Login realizado con éxito") {
       Swal.fire({
         icon: "error",
